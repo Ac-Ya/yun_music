@@ -1,6 +1,4 @@
-/*
-  首页
-*/
+
 <template>
   <el-container>
     <!-- 头部 -->
@@ -26,7 +24,9 @@ export default {
   },
   props: {},
   data() {
-    return {};
+    return {
+      userInfo:null
+    };
   },
 };
 </script>
