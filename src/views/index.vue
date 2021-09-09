@@ -25,8 +25,15 @@ export default {
   props: {},
   data() {
     return {
-      userInfo:null
+      
     };
+  },
+  created(){
+    // 判断用户是否登录
+    
+  },
+  methods:{
+  
   },
 };
 </script>
