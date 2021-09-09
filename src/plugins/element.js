@@ -32,7 +32,9 @@ import {
     Link,
     Tooltip,
     Loading,
+
 } from 'element-ui'
+
 
 Vue.use(Container)
 Vue.use(Footer)
