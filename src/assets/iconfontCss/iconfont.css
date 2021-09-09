@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2796804 */
-  src: url('//at.alicdn.com/t/font_2796804_86tqrb1yxtn.woff2?t=1631096031873') format('woff2'),
-       url('//at.alicdn.com/t/font_2796804_86tqrb1yxtn.woff?t=1631096031873') format('woff'),
-       url('//at.alicdn.com/t/font_2796804_86tqrb1yxtn.ttf?t=1631096031873') format('truetype');
+  src: url('//at.alicdn.com/t/font_2796804_7us3pw98vcc.woff2?t=1631173194004') format('woff2'),
+       url('//at.alicdn.com/t/font_2796804_7us3pw98vcc.woff?t=1631173194004') format('woff'),
+       url('//at.alicdn.com/t/font_2796804_7us3pw98vcc.ttf?t=1631173194004') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-shouye:before {
+  content: "\e618";
+}
+
+.icon-tuichudenglu:before {
+  content: "\e647";
+}
+
+.icon-huiyuan:before {
+  content: "\e8a6";
+}
+
+.icon-bangding:before {
+  content: "\e7bb";
+}
+
+.icon-dengji:before {
+  content: "\e6f7";
+}
+
+.icon-gerenxinxishezhi:before {
+  content: "\e689";
 }
 
 .icon-password:before {
