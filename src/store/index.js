@@ -10,7 +10,6 @@ export default new Vuex.Store({
   mutations: {
     UID(state,payload) {
       state.uid = payload
-      console.log(state.uid);
     }
   },
   actions: {
