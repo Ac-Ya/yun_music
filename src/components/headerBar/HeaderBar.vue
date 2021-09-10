@@ -155,7 +155,7 @@ export default {
           uid,
         },
       });
-      console.log(res);
+      // console.log(res);  
       this.userInfo = res.data.profile;
     },
 
