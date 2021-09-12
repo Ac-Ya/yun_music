@@ -29,10 +29,9 @@
           ></el-input>
         </el-form-item>
         <el-form-item class="login-btn">
-          <router-link to="/index" replace>
-            <el-button type="primary" @click="login" :plain="true"
-              >登录</el-button>
-          </router-link>
+          <el-button type="primary" @click="login" :plain="true"
+            >登录</el-button
+          >
           <el-button type="info" @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
@@ -89,43 +88,34 @@ export default {
           method: "post",
           data: this.loginForm,
         });
-        // console.log(res);
-        if (res.status === 200) {
+        console.log(res);
+        if (res.data.code === 200) {
           this.$message({
             // showClose: true, //可手动关闭提示框
             duration: 3000, //设置自动关闭时间  默认为3000
             message: `${res.statusText}`,
             type: "success",
           });
-          /*  登陆成功后的逻辑
-          1．将登录成功之后的 token，保存到客户端的sessionstorage中
-            1.1项目中出了登录之外的其他API接口，必须在登录之后才能访问
-            1.2 token只应在当前网站打开期间生效，所以将token保存在sessionStorage中
-          2．通过编程式导航跳转到后台主页，路由地址是/ home
-        */
-          window.localStorage.setItem("token", res.data.token);
-          window.localStorage.setItem("cookies", res.data.cookie);
-          //  保存在localStorage 用于学习
-          window.localStorage.setItem("uid", res.data.profile.userId);
 
+
+          window.localStorage.setItem("token", res.data.token);
+          window.localStorage.setItem("uid", res.data.profile.userId);
           this.$store.commit("UID", res.data.profile.userId);
+
+
+          this.$router.push("/index")
         } else {
           this.$message({
             // showClose: true,
             duration: 3000,
-            message: `${res.statusText}`,
+            message: `${res.data.msg}`,
             type: "error",
           });
+          //重置表单
+          this.resetForm()
         }
       });
     },
-    //跳转到index
-    // toIndex(){
-    //   this.$router.push({
-    //     path:"/index",
-    //     replace: true
-    //   })
-    // }
   },
 };
 </script>

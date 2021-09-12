@@ -6,7 +6,7 @@
       <header-bar></header-bar>
     </el-header>
     <!-- 内容主体 -->
-    <el-container class="center">
+    <el-container class="center" >
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <aside-nav></aside-nav>
@@ -50,30 +50,39 @@ export default {
     display: flex;
     height: 100vh;
   }
-  .center{
-    flex: 1;
-  }
+  
   .el-header{
+    position: fixed;
     width: 100%;
     padding: 0;
     background-color: #EC4141;
+    z-index: 999;
   }
-   .el-aside {
+  .el-aside {
+    position: fixed;
     color: #333;
+    border-right: 1px solid #EC4141;
+    height: calc(100vh - 130px);
+  }
+  .center{
+    flex: 1;
+    position: absolute;
+    top: 60px;
   }
   
   .el-main {
-    // background-color: #E9EEF3;
     color: #333;
-    // text-align: center;
-    margin:15px 0 0 0;
+    // margin:15px 0 0 0;
     padding: 0;
-    // line-height: 160px;
-    // border: 1px solid red;
+    position: absolute;
+    left: 210px;
   }
   .musicControl{
+    position: fixed;
+    bottom: 0;
     width: 100%;
-    height: 80px;
+    height: 70px;
     background-color: mediumaquamarine;
   }
+
 </style>

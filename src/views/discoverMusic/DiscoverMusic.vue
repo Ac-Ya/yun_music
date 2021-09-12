@@ -39,6 +39,7 @@ export default {
   methods: {
     handleClick(key) {
         this.borderB = key   //修改当前点击的标签
+        this.$router.push("/"+key)
     },
   },
 };
@@ -50,6 +51,10 @@ export default {
         border-bottom: 3px solid #ec4141;
     }
     .navBar{
-        border: 1px solid red;
+        // width:1000px;
+        width: 100%;
+        position: fixed;
+        z-index: 999;
+        background-color: white;
     }
 </style>
