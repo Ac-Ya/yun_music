@@ -18,6 +18,5 @@ export default {
 <style lang="less" scoped>
 #cardList{
   display: flex;
-  flex-wrap: wrap;
 }
 </style>

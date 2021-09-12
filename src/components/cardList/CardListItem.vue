@@ -1,6 +1,7 @@
 <template>
   <div id="cardListItem">
     <slot name="item-img"></slot>
+    <slot name="item-name"></slot>
     <slot name="item-playCount"></slot>
     <slot name="item-playIconfont"></slot>
     <slot name="item-title"></slot>
