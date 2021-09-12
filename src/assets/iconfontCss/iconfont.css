@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2796804 */
-  src: url('//at.alicdn.com/t/font_2796804_llkox3zyh3c.woff2?t=1631256047577') format('woff2'),
-       url('//at.alicdn.com/t/font_2796804_llkox3zyh3c.woff?t=1631256047577') format('woff'),
-       url('//at.alicdn.com/t/font_2796804_llkox3zyh3c.ttf?t=1631256047577') format('truetype');
+  src: url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.woff2?t=1631435392890') format('woff2'),
+       url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.woff?t=1631435392890') format('woff'),
+       url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.ttf?t=1631435392890') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,26 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-yonghu1:before {
+  content: "\e69c";
+}
+
+.icon-jingpin:before {
+  content: "\e60e";
+}
+
+.icon-bofang:before {
+  content: "\e610";
+}
+
+.icon-bofang1:before {
+  content: "\101c5";
+}
+
+.icon-bofang4:before {
+  content: "\e607";
 }
 
 .icon-ttpodicon:before {
