@@ -35,7 +35,6 @@
           class="listItem"
           @mouseenter="enter(index)"
           @mouseleave="leave(index)"
-          :id="index"
         >
           <img :src="item.picUrl" alt="" />
           <div class="playNum">
@@ -157,7 +156,6 @@ export default {
         url: "/banner",
         method: "get",
       });
-      console.log(res);
       this.banners = res.data.banners;
     },
     //推荐歌单列表
@@ -169,7 +167,6 @@ export default {
           limit: 9,
         },
       });
-      // console.log(res);
       this.recommendPlaylist = res.data.result;
     },
 
@@ -194,6 +191,7 @@ export default {
     // 鼠标移入移出事件
     enter(index) {
       this.showIcon = index;
+      // console.log(index);
     },
     leave() {
       this.showIcon = -1;
@@ -241,7 +239,7 @@ export default {
     flex-wrap: wrap;
     .listItem {
       position: relative;
-      width: 18%;
+      // width: 20%;  
       min-width: 150px;
       max-width: 200px;
       margin: 0 20px 20px 0;

@@ -72,7 +72,6 @@ export default {
   
   .el-main {
     color: #333;
-    // margin:15px 0 0 0;
     padding: 0;
     position: absolute;
     left: 210px;
@@ -83,6 +82,7 @@ export default {
     width: 100%;
     height: 70px;
     background-color: mediumaquamarine;
+    z-index: 999;
   }
 
 </style>
