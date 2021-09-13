@@ -32,10 +32,11 @@ import {
     Link,
     Tooltip,
     Loading,
+    Card,
 
 } from 'element-ui'
-
-
+Vue.use(Table)
+Vue.use(Card)
 Vue.use(Container)
 Vue.use(Footer)
 Vue.use(Header)
@@ -51,7 +52,7 @@ Vue.use(CarouselItem)
 Vue.use(Pagination)
 Vue.use(Tabs)
 Vue.use(TabPane)
-Vue.use(Table)
+
 Vue.use(TableColumn)
 Vue.use(Slider)
 Vue.use(Input)
