@@ -61,7 +61,7 @@ export default {
   .el-aside {
     position: fixed;
     color: #333;
-    border-right: 1px solid #EC4141;
+    border-right: 1px solid #DCDCDC;
     height: calc(100vh - 130px);
   }
   .center{
@@ -75,6 +75,7 @@ export default {
     padding: 0;
     position: absolute;
     left: 210px;
+    width: calc(100vw - 200px);
   }
   .musicControl{
     position: fixed;

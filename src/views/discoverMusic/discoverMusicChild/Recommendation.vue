@@ -94,9 +94,9 @@
 
 <script>
 import { request } from "network/request.js";
-import { tranNumber } from "../../../utils/utils.js";
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
+import {tranNumber} from "plugins/utils.js"
 
 export default {
   name: "Recommendation",
@@ -117,29 +117,9 @@ export default {
   computed: {
     //   计算属性传参
     playcount() {
-      return (num, point = 2) => {
-        // 将数字转换为字符串,然后通过split方法用.分隔,取到第0个
-        let numStr = num.toString().split(".")[0];
-        if (numStr.length < 5) {
-          // 判断数字有多长,如果小于5,表示1万以内的数字,让其直接显示
-          return numStr;
-        } else if (numStr.length >= 5 && numStr.length <= 8) {
-          // 如果数字大于5位,小于8位,让其数字后面加单位万
-          let decimal = numStr.substring(
-            numStr.length - 4,
-            numStr.length - 4 + point
-          );
-          // 由千位,百位组成的一个数字
-          return parseFloat(parseInt(num / 10000) + "." + decimal) + "万";
-        } else if (numStr.length > 8) {
-          // 如果数字大于8位,让其数字后面加单位亿
-          let decimal = numStr.substring(
-            numStr.length - 8,
-            numStr.length - 8 + point
-          );
-          return parseFloat(parseInt(num / 100000000) + "." + decimal) + "亿";
-        }
-      };
+      return (num,point = 2)=>{
+        return tranNumber(num,point)
+      }
     },
   },
   created() {
@@ -237,9 +217,10 @@ export default {
   .playlist {
     display: flex;
     flex-wrap: wrap;
+    min-width: 1100px;
     .listItem {
       position: relative;
-      // width: 20%;  
+      // width: 19%;  
       min-width: 150px;
       max-width: 200px;
       margin: 0 20px 20px 0;
@@ -304,6 +285,7 @@ export default {
 }
 .privatecontent {
   margin-bottom: 30px;
+  min-width: 1100px;
 }
 .privatecontent .privatecontentListItem {
   width: 32%;
@@ -350,5 +332,6 @@ export default {
 }
 .recommendMV{
   margin-bottom: 100px;
+  min-width: 1100px;
 }
 </style>

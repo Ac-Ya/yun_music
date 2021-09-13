@@ -39,13 +39,39 @@
       </div>
     </div> -->
     <!-- 定义组件传入标签  -->
-    <nav-bar :tags="hotTags" :tag="currentTag" @child="switchTag"></nav-bar>
+    <nav-bar 
+    :tags="hotTags" 
+    :tag="currentTag" 
+    @child="switchTag" 
+    @showAll="showAllTag">
+      <el-card class="box-card allTags" slot="allTag"   v-show="show">
+        <div slot="header" class="clearfix">
+          <span>全部歌单</span>
+        </div>
+        <div class="text item">
+          <div class="category" v-for="(val, key) in categories" :key="key">
+            <div class="categoryTitle">
+              <i class="iconfont" :class="tagIconfont[key]"></i>
+              <span>{{ val }}</span>
+            </div>
+            <div class="categoryTags">
+              <span :class="{categoryTag:item.name == currentTag}" 
+              @click="switchTag(item.name)"
+              v-for="item in allTagsList[key].List" 
+              :key="item.name">
+                {{item.name}}
+              </span>
+            </div>
+          </div>
+        </div>
+      </el-card>
+    </nav-bar>
     <!-- 歌单列表 -->
     <card-list
       class="list"
       v-loading="loading"
       element-loading-spinner="el-icon-loading"
-      v-if="currentListData !== null"
+      v-show="currentListData !== null"
     >
       <card-list-item
         class="playListItem"
@@ -68,7 +94,7 @@
         </div>
         <div slot="item-playCount" class="count">
           <i class="iconfont icon-bofang"></i>
-          <span>3000万</span>
+          <span>{{count(item.playCount)}}</span>
         </div>
         <span slot="item-title" class="playListTitle">
           {{ item.name }}
@@ -76,7 +102,7 @@
       </card-list-item>
     </card-list>
     <!-- 分页 -->
-    <div class="pages" v-if="currentListData !== []">
+    <div class="pages" v-show="showPage">
       <el-pagination
         background
         layout="prev, pager, next"
@@ -94,9 +120,10 @@
 import { request } from "network/request.js";
 import NavBar from "components/navBar/NavBar.vue";
 
-
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
+
+import {tranNumber} from "plugins/utils.js"
 export default {
   name: "PlayList",
   components: {
@@ -110,15 +137,33 @@ export default {
       showIcon: -1,
       highqualityFirst: null, //精品歌单的第一个数据
       hotTags: [], //右侧热门歌单标签
-      allTags: [], //所有歌单标签
       currentTag: "华语", //当前歌单标签
       currentListData: [], //当前歌单标签的数据
       loading: true,
+      showPage: false,
       currentPage: 1, // 当前页数
       total: 0,
+      allTagsList: [], //所有标签列表
+      categories: null, //所有标签的分类
+      tagIconfont: {
+        0: "icon-yuyan",
+        1: "icon-fengge",
+        2: "icon-chabei",
+        3: "icon-smile",
+        4: "icon-zhuti",
+      },
+      show:false
     };
   },
+  computed: {
+    count(){
+      return (num,point = 2)=>{
+        return tranNumber(num,point)
+      }
+    }
+  },
   created() {
+  
     this.getHighQualityFirst();
 
     //获取热门歌单标签
@@ -126,6 +171,9 @@ export default {
 
     //获取当前歌单标签的列表数据
     this.getCurrentListData();
+
+    //获取所有标签
+    this.getAllTags();
   },
   methods: {
     //根据tag获取精品歌单的第一个数据
@@ -144,6 +192,8 @@ export default {
         return;
       }
       this.highqualityFirst = res.data.playlists[0];
+
+      res = null
     },
 
     //获取热门歌单标签
@@ -153,6 +203,8 @@ export default {
         method: "get",
       });
       this.hotTags = res.data.tags;
+
+      res = null
     },
 
     //获取当前歌单标签的列表数据
@@ -168,14 +220,23 @@ export default {
           offset: 50 * (this.currentPage - 1),
         },
       });
-      this.currentListData = res.data.playlists;
+      console.log(res);
+      let data = res.data.playlists;
+      // data.map((item,index,arr)=>{
+      //   return item.playCount = tranNumber(item.playCount,2)
+      // })
+      this.currentListData = data
       this.total = res.data.total;
       this.loading = false;
+      this.showPage = true;
+
+      res = null
     },
 
     //点击标签切换事件
     switchTag(tag) {
       this.loading = true;
+      this.showPage = false;
       // 修改当前的标签
       this.currentTag = tag;
       // 修改当前页数为1
@@ -196,6 +257,45 @@ export default {
       this.currentPage = page;
       this.getCurrentListData();
     },
+
+    // 获取所有标签
+    async getAllTags() {
+      let res = await request({
+        url: "/playlist/catlist",
+        method: "get",
+      });
+      this.categories = res.data.categories;
+      this.allTagsList = this.allTagCategory(res.data.sub)
+    },
+
+    //全部标签分类
+    allTagCategory(arr){
+      let dataArr = [];
+      arr.map((mapItem) => {
+        if (dataArr.length == 0) {
+          dataArr[mapItem.category]={category: mapItem.category, List: [mapItem] };
+        } else {
+          let res = dataArr.some((item) => {
+            //判断相同，有就添加到当前项
+            if (item.category == mapItem.category) {
+              item.List.push(mapItem);
+              return true;
+            }
+          });
+          if (!res) {
+            //如果没找相同,添加一个新对像
+            dataArr[mapItem.category]= { category: mapItem.category, List: [mapItem] };
+          }
+        }
+      });
+      return dataArr
+    },
+
+    showAllTag(data){
+      this.show = data
+    }
+
+
   },
 };
 </script>
@@ -303,7 +403,7 @@ export default {
 .list {
   display: flex;
   flex-wrap: wrap;
-  // margin-top: 40px;
+  width: 1115px;
   .playListItem {
     width: 19%;
     position: relative;
@@ -356,5 +456,56 @@ export default {
   width: 100%;
   text-align: center;
   margin: 20px 0 80px 0;
+}
+
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+}
+.clearfix:after {
+  clear: both;
+}
+
+.box-card {
+  width: 800px;
+  position: absolute;
+  z-index: 99;
+  left: 0;
+  top: 35px;
+}
+// 标签分类
+.category {
+  display: flex;
+  width: 100%;
+  margin-bottom: 18px;
+  .categoryTitle {
+    display: flex;
+    margin-right: 20px;
+    line-height: 35px;
+    color: #c0c0c0;
+    .iconfont {
+      font-size: 20px;
+      margin-right: 10px;
+    }
+    span{
+      white-space: nowrap;
+    }
+  }
+  .categoryTags {
+    display: flex;
+    flex-wrap: wrap;
+    span {
+      width: 60px;
+      height: 35px;
+      line-height: 35px;
+      margin: 0 20px;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+  }
+  .categoryTag{
+    color: #ec4141;
+  }
 }
 </style>

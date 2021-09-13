@@ -54,6 +54,7 @@ export default {
 #discoverMusic {
   width: 100%;
 }
+
 .navBarItem {
   font-size: 18px;
   font-weight: bold;
@@ -67,7 +68,7 @@ export default {
   background-color: white;
 }
 .barItem{
-  margin-right: 20px;
+    margin-right: 20px;
     display: block;
     height: 35px;
     line-height: 35px;
