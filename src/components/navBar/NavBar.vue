@@ -2,10 +2,13 @@
   <div id="navBar">
     <div class="playlistNav">
       <!-- 当前歌单列表标签 -->
-      <div class="currentTag">
-        <span>华语</span>
-        <i class="iconfont icon-xiayiye"></i>
+      <div class="currentTag" @click="showAllTag">
+        <span>{{tag}}</span>
+        <i class="iconfont icon-xiayiye"></i> 
       </div>
+      <!-- 全部标签 -->
+      <slot name="allTag"></slot>
+
       <!-- 歌单标签导航栏 -->
       <div class="playlistTag">
         <div
@@ -37,11 +40,17 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      show:false
+    };
   },
   methods:{
     switchTag(tag){
       this.$emit("child",tag)
+    },
+    showAllTag(){
+      this.show = !this.show
+      this.$emit("showAll",this.show)
     }
   },
 };
@@ -62,12 +71,13 @@ export default {
   position: relative;
   display: flex;
   .currentTag {
-    width: 100px;
+    width: 120px;
     height: 30px;
     border: 1px solid #dcdcdc;
     padding: 5px 10px;
     text-align: center;
     border-radius: 15px;
+    white-space: nowrap;
   }
 }
 .playlistTag {
