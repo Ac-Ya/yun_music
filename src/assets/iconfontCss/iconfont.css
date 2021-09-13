@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 2796804 */
-  src: url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.woff2?t=1631435392890') format('woff2'),
-       url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.woff?t=1631435392890') format('woff'),
-       url('//at.alicdn.com/t/font_2796804_bgkcmr86t4.ttf?t=1631435392890') format('truetype');
+  src: url('//at.alicdn.com/t/font_2796804_unhx40io1t.woff2?t=1631516837192') format('woff2'),
+       url('//at.alicdn.com/t/font_2796804_unhx40io1t.woff?t=1631516837192') format('woff'),
+       url('//at.alicdn.com/t/font_2796804_unhx40io1t.ttf?t=1631516837192') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,30 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-smile:before {
+  content: "\e673";
+}
+
+.icon-zhuti:before {
+  content: "\e682";
+}
+
+.icon-yuyan:before {
+  content: "\e684";
+}
+
+.icon-chabei:before {
+  content: "\e6bb";
+}
+
+.icon-tubiaozhizuosvg-40:before {
+  content: "\e609";
+}
+
+.icon-fengge:before {
+  content: "\ee26";
 }
 
 .icon-yonghu1:before {
