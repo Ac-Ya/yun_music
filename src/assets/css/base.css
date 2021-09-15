@@ -57,7 +57,7 @@ i,tr,.buttons div {
     background: var(--color-background);
     color: var(--color-text);
     /* rem vw/vh */
-    width: 100vw;
+    /* width: 100vw; */
   }
   
   a {
