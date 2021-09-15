@@ -9,7 +9,7 @@
       v-for="(item, index) in officalListData"
       :key="item.id"
     >
-      <div class="coverImg">
+      <div class="coverImg" @click="toMusicListDetail(item.id)">
         <img :src="item.coverImgUrl" alt="" />
         <span>{{ item.updateFrequency }}</span>
       </div>
@@ -37,19 +37,23 @@
       <span>全球榜</span>
     </div>
     <div class="globalList" v-if="globalListData !== null">
-      <div class="listItem" 
-      @mouseenter="enter(indey)"
-      @mouseleave="leave(indey)"
-      v-for="(listItem,indey) in globalListData" :key="listItem.id">
+      <div
+        class="listItem"
+        @mouseenter="enter(indey)"
+        @mouseleave="leave(indey)"
+        @click="toMusicListDetail(listItem.id)"
+        v-for="(listItem, indey) in globalListData"
+        :key="listItem.id"
+      >
         <img :src="listItem.coverImgUrl" alt="" />
         <div class="playNum">
           <i class="iconfont icon-bofang4"></i>
-          <span>{{count(listItem.playCount)}}</span>
+          <span>{{ count(listItem.playCount) }}</span>
         </div>
-        <div class="playIcon" :class="{show:showIcon == indey}">
+        <div class="playIcon" :class="{ show: showIcon == indey }">
           <i class="iconfont icon-bofang"></i>
         </div>
-        <span class="playlistTitle">{{listItem.name}}</span>
+        <span class="playlistTitle">{{ listItem.name }}</span>
       </div>
     </div>
   </div>
@@ -57,26 +61,25 @@
 
 <script>
 import { request } from "network/request.js";
-import {tranNumber} from "plugins/utils.js"
+import { tranNumber } from "plugins/utils.js";
 export default {
   name: "Top",
   components: {},
   props: {},
   data() {
     return {
-      showIcon:-1,
+      showIcon: -1,
       officalListData: [], //官方榜的数据
       officalListDetail: [],
       globalListData: [], //全球榜数据
     };
   },
   computed: {
-    count(){
-      return (num,point = 2)=>{
-        return tranNumber(num,point)
-      }
-    }
-    
+    count() {
+      return (num, point = 2) => {
+        return tranNumber(num, point);
+      };
+    },
   },
   created() {
     //获取榜单数据
@@ -118,6 +121,16 @@ export default {
     },
     leave() {
       this.showIcon = -1;
+    },
+
+    //跳转到音乐榜单详情页
+    toMusicListDetail(id) {
+      this.$router.push({
+        path: "/musicListDetail",
+        query: {
+          id,
+        },
+      });
     },
   },
 };
@@ -189,46 +202,46 @@ export default {
   color: #ec4141;
 }
 
-  .globalList {
-    display: flex;
-    flex-wrap: wrap;
-    min-width: 1100px;
-    margin-bottom: 70px;
-    .listItem {
-      position: relative;
-      min-width: 150px;
-      max-width: 200px;
-      margin: 0 20px 20px 0;
-    }
-    // 标题样式
-    .playlistTitle {
-      display: inline-block;
-      width: 100%;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 14px;
-      margin-top: 5px;
-    }
-    //icon图标样式
-    .playIcon {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%,-50%);
-      color: #ec4141;
-      opacity: 0;
-      .iconfont {
-        font-size: 40px;
-        border-radius: 50%;
-        background-color: rgba(255,255,255,.9);
-      }
-    }
-    .show {
-      opacity: 1;
-      transition: all 1s;
+.globalList {
+  display: flex;
+  flex-wrap: wrap;
+  min-width: 1100px;
+  margin-bottom: 70px;
+  .listItem {
+    position: relative;
+    min-width: 150px;
+    max-width: 200px;
+    margin: 0 20px 20px 0;
+  }
+  // 标题样式
+  .playlistTitle {
+    display: inline-block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 14px;
+    margin-top: 5px;
+  }
+  //icon图标样式
+  .playIcon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ec4141;
+    opacity: 0;
+    .iconfont {
+      font-size: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.9);
     }
   }
+  .show {
+    opacity: 1;
+    transition: all 1s;
+  }
+}
 .listItem img {
   width: 100%;
   border-radius: 5px;

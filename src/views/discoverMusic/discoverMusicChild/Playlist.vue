@@ -17,27 +17,7 @@
       </div>
     </div>
     <!-- 导航栏 -->
-    <!-- 歌单标签导航栏 -->
-    <!-- 当前歌单列表标签 -->
-
-    <!-- <div class="playlistNav">
-      <div class="currentTag">
-        <span>华语</span>
-        <i class="iconfont icon-xiayiye"></i>
-      </div>
-   
-      <div class="playlistTag">
-        <div
-          class="playlistTagItem"
-          :class="{ isShow: currentTag === item.name }"
-          @click="switchTag(item.name)"
-          v-for="item in hotTags"
-          :key="item.id"
-        >
-          {{ item.name }}
-        </div>
-      </div>
-    </div> -->
+  
     <!-- 定义组件传入标签  -->
     <nav-bar 
     :tags="hotTags" 
@@ -79,6 +59,7 @@
         :key="item.uersId"
         @mouseenter.native="enter(index)"
         @mouseleave.native="leave"
+        @click.native="toMusicListDetail(item.id)"
       >
         <img :src="item.coverImgUrl" alt="" slot="item-img" />
         <div slot="item-name" class="playListName">
@@ -220,11 +201,8 @@ export default {
           offset: 50 * (this.currentPage - 1),
         },
       });
-      console.log(res);
+      // console.log(res);
       let data = res.data.playlists;
-      // data.map((item,index,arr)=>{
-      //   return item.playCount = tranNumber(item.playCount,2)
-      // })
       this.currentListData = data
       this.total = res.data.total;
       this.loading = false;
@@ -293,9 +271,16 @@ export default {
 
     showAllTag(data){
       this.show = data
+    },
+    // 跳转到歌单详情
+    toMusicListDetail(id){
+      this.$router.push({
+        path:"/musicListDetail",
+        query:{
+          id
+        }
+      })
     }
-
-
   },
 };
 </script>

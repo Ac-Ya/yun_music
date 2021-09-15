@@ -29,12 +29,14 @@
           </div>
           <span class="playlistTitle">每日歌曲推荐</span>
         </div>
+        <!-- 每一个音乐卡片 -->
         <div
           v-for="(item, index) in recommendPlaylist"
           :key="item.id"
           class="listItem"
           @mouseenter="enter(index)"
           @mouseleave="leave(index)"
+          @click="toMusicListDetail(item.id)"
         >
           <img :src="item.picUrl" alt="" />
           <div class="playNum">
@@ -176,6 +178,16 @@ export default {
     leave() {
       this.showIcon = -1;
     },
+    // 跳转到歌单详情页面
+    toMusicListDetail(id){
+      console.log(id);
+      this.$router.push({
+        path:"/musicListDetail",
+        query:{
+          id
+        }
+      })
+    }
   },
 };
 </script>

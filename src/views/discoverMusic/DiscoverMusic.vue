@@ -64,8 +64,9 @@ export default {
   display: flex;
   width: 100%;
   position: fixed;
-  z-index: 999;
+  z-index: 99;
   background-color: white;
+  margin-left: 10px;
 }
 .barItem{
     margin-right: 20px;
