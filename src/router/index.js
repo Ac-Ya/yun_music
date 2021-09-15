@@ -10,7 +10,7 @@ const Playlist = () => import("views/discoverMusic/discoverMusicChild/Playlist.v
 const NewMusic = () => import("views/discoverMusic/discoverMusicChild/NewMusic.vue")
 const Singer = () => import("views/discoverMusic/discoverMusicChild/Singer.vue")
 const Top = () => import("views/discoverMusic/discoverMusicChild/Top.vue")
-
+const MusicListDetail = () => import("views/musicListDetail/MusicListDetail.vue")
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -57,6 +57,10 @@ const routes = [
             component: Top
           }
         ]
+      },
+      {
+        path: "/musicListDetail",
+        component:MusicListDetail
       }
     ]
   }
