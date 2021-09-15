@@ -48,7 +48,7 @@ export default {
 <style lang="less" scoped>
   #index{
     display: flex;
-    height: 100vh;
+    // height: 100vh;
   }
   
   .el-header{
@@ -74,8 +74,8 @@ export default {
     color: #333;
     padding: 0;
     position: absolute;
-    left: 210px;
-    width: calc(100vw - 200px);
+    left: 200px;
+    width: calc(100vw - 210px);
   }
   .musicControl{
     position: fixed;
