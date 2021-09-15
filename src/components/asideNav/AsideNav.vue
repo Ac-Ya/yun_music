@@ -39,7 +39,6 @@ export default {
         PrivateFM: "私人FM",
       },
       operationList2: {
-        localMusic: "本地音乐",
         downloadManager: "下载管理",
         recentPlay: "最近播放",
         cloudDisk: "音乐云盘",
@@ -48,7 +47,6 @@ export default {
         collectPlaylist: "收藏的歌单",
       },
       iconfontList: {
-        localMusic: "icon-ttpodicon",
         downloadManager: "icon-xiazaiguanli",
         recentPlay: "icon-zuijinbofang",
         cloudDisk: "icon-yunpan",
@@ -62,7 +60,8 @@ export default {
   methods: {
     to(key) {
       this.click = key;
-      //   this.$router.push("/discoverMusic")
+      console.log(key);
+        this.$router.push("/"+key)
     },
   },
 };
