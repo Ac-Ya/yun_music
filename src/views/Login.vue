@@ -79,6 +79,7 @@ export default {
     },
     //登陆验证
     login() {
+      let timestamp = Date.parse(new Date());
       this.$refs.loginFormRef.validate(async (validate) => {
         if (!validate) {
           return;
@@ -86,24 +87,25 @@ export default {
         let res = await request({
           url: "/login/cellphone",
           method: "post",
-          data: this.loginForm,
+          data: {
+            phone: this.loginForm.phone,
+            password: this.loginForm.password,
+            withCredentials: true,
+            timestamp
+          },
         });
-        console.log(res);
         if (res.data.code === 200) {
           this.$message({
-            // showClose: true, //可手动关闭提示框
             duration: 3000, //设置自动关闭时间  默认为3000
             message: `${res.statusText}`,
             type: "success",
           });
 
-
-          window.localStorage.setItem("token", res.data.token);
+          window.localStorage.setItem("cookie", res.data.cookie);
           window.localStorage.setItem("uid", res.data.profile.userId);
           this.$store.commit("UID", res.data.profile.userId);
-
-
-          this.$router.push("/index")
+          this.$store.commit("updataLoginState", true);
+          this.$router.push("/index");
         } else {
           this.$message({
             // showClose: true,
@@ -112,7 +114,7 @@ export default {
             type: "error",
           });
           //重置表单
-          this.resetForm()
+          this.resetForm();
         }
       });
     },
