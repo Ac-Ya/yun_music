@@ -65,7 +65,8 @@
       <div v-show="isMore" class="loadMore" @click="loadMore">加载更多</div>
     </div>
     <!-- 评论区域 -->
-    <comment v-if="currentTag === '2'" class="comment"></comment>
+    <!-- 传入评论类型type  资源id-->
+    <comment v-if="currentTag === '2'" class="comment" :commentType="+2" :sourceID="+this.$route.query.id"></comment>
   </div>
 </template>
 
@@ -73,10 +74,9 @@
 import MusicTable from "components/musicTable/MusicTable.vue";
 import MusicTableItem from "components/musicTable/MusicTableItem.vue";
 import Comment from "components/comment/Comment.vue";
-
 import { tranNumber } from "plugins/utils.js";
-
 import { request } from "network/request.js";
+
 export default {
   name: "MusicListDetail",
   components: { MusicTable, MusicTableItem, Comment },
@@ -88,10 +88,12 @@ export default {
       isMore: false, //是否需要加载跟多
       musicListData: null,
       musicData: [], //歌单的音乐详情列表
+      hotCommentData:[],//热门评论数据
     };
   },
   created() {
     // 要判断登录
+    console.log(this.$route.query.id);
     this.getMusicListData(+this.$route.query.id);
   },
   computed: {
@@ -111,6 +113,7 @@ export default {
           id,
         },
       });
+      console.log(res);
       let data = res.data.playlist;
       /*
         1、如果isMore 为true 说明需要显示加载更多 
@@ -278,6 +281,7 @@ export default {
 .comment {
   padding: 20px;
   width: 100%;
+  margin-bottom: 70px;
 }
 /deep/ .el-textarea__inner {
   height: 65px;
