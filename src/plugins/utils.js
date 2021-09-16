@@ -1,4 +1,41 @@
+const formatTime = date => {
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+  
+    return `${[year, month, day].map(formatNumber).join('-')} ${[hour, minute, second].map(formatNumber).join(':')}`
+}
+  
 
+const  formatDate = (date, fmt) =>{
+    // 1.获取年份
+    // y+ 1个或者多个y  yyyy:2021
+    // y* 0个或者多个y
+    // y? 0个或者1个y
+    if (/(y+)/.test(fmt)) {
+        // RegExp.$1 指的是与正则表达式匹配的第一个子匹配
+        fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length))
+    }
+
+    // 2.获取月日等
+    let o = {
+        'M+': date.getMonth() + 1,
+        'd+': date.getDate(),
+        'h+': date.getHours(),
+        'm+': date.getMinutes(),
+        's+': date.getSeconds()
+    }
+    for (let k in o) {
+        if (new RegExp(`(${k})`).test(fmt)) {
+            let str = o[k] + '';
+            fmt = fmt.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : padLeftZero(str));
+        }
+    }
+    return fmt
+}
 
 // num接收的数字,point保留数字的第几位
 const tranNumber = (num, point) => {
@@ -34,12 +71,13 @@ const formatMusicTime = (time) => {
     let totalSecond = Math.ceil(time / 1000)
     let minute = parseInt(totalSecond / 60)
     let second = totalSecond - minute * 60
-
     return `${formatNumber(minute)}:${formatNumber(second)}`
 
 }
 module.exports =  {
     tranNumber,
     timestampFormat,
-    formatMusicTime
+    formatMusicTime,
+    formatTime,
+    formatDate
 }
