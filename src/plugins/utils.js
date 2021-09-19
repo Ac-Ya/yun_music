@@ -69,15 +69,51 @@ const formatNumber = n => {
 //格式化音乐时间
 const formatMusicTime = (time) => {
     let totalSecond = Math.ceil(time / 1000)
+    
     let minute = parseInt(totalSecond / 60)
+
     let second = totalSecond - minute * 60
+
     return `${formatNumber(minute)}:${formatNumber(second)}`
 
+}
+//获取某个范围内的随机数
+const randomNum = (minNum, maxNum) =>{
+    switch (arguments.length) {
+      case 1:
+        return parseInt(Math.random() * minNum + 1, 10);
+        break;
+      case 2:
+        return parseInt(Math.random() * ( maxNum - minNum + 1 ) + minNum, 10);
+        //或者 Math.floor(Math.random()*( maxNum - minNum + 1 ) + minNum );
+        break;
+      default:
+        return 0;
+        break;
+    }
+  }  
+
+
+const handleMusicTime = (time)=> {
+    // 如果超过了100000 基本都是毫秒为单位的了 先转成秒的
+    time = parseInt(time)
+    if (time > 10000) {
+        time = Math.floor(time / 1000);
+    } else {
+        time = Math.floor(time)
+    }
+    let m = Math.floor(time / 60);
+    let s = Math.floor(time % 60);
+    m = m < 10 ? '0' + m : m;
+    s = s < 10 ? '0' + s : s;
+    return m + ':' + s;
 }
 module.exports =  {
     tranNumber,
     timestampFormat,
     formatMusicTime,
     formatTime,
-    formatDate
+    formatDate,
+    handleMusicTime,
+    randomNum
 }
