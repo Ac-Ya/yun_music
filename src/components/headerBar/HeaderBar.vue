@@ -300,7 +300,7 @@ export default {
 .login span,
 .login .iconfont {
   font-size: 12px;
-  color: #fff;
+  color: @color;
   margin-left: 5px;
 }
 .constrol {
@@ -312,7 +312,7 @@ export default {
 }
 .constrol .iconfont {
   font-size: 18px;
-  color: #fff;
+  color: @color;
 }
 
 //共同样式
@@ -325,14 +325,12 @@ export default {
   right: 60px;
   box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  z-index: 9999;
   background-color: #fff;
 }
 
 // 二维码登录框
 .qrLogin {
   position: relative;
-  z-index: 999;
   text-align: center;
   .commont();
   .p1 {

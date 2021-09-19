@@ -8,8 +8,10 @@
         type="textarea"
         maxlength="140"
         show-word-limit
-        placeholder="留下你的评论"
+        :placeholder="placeholderData"
+        @blur="blurComment"
       >
+        <!-- @input="inputComment" -->
       </el-input>
       <div class="submitComment">
         <span>@</span>
@@ -80,7 +82,10 @@
             <div class="commentControl">
               <div><i class="iconfont icon-zan"></i>{{ item.likedCount }}</div>
               <i class="iconfont icon-fenxiang"></i>
-              <i class="iconfont icon-huifu"></i>
+              <i
+                class="iconfont icon-huifu"
+                @click="handleRepled(item.commentId, item.user.nickname)"
+              ></i>
             </div>
           </div>
         </div>
@@ -90,6 +95,7 @@
     <!-- 分页 -->
     <div class="pages">
       <el-pagination
+        v-if="!(total < 100)"
         background
         layout="prev, pager, next"
         :total="total"
@@ -103,6 +109,7 @@
 </template>
 
 <script>
+// 评论区点赞，分享暂时没做
 import { request } from "network/request.js";
 import { formatTime } from "plugins/utils.js";
 export default {
@@ -139,12 +146,13 @@ export default {
         4: "dj",
         5: "video",
       },
+      placeholderData: "留下你的评论",
       currentPage: 1, //当前评论页数
       moreHot: false,
       total: 0,
-      commentID: 0, //用于保存回复评论时所在楼层的id
-      commentName:'',//用于保存回复评论时所在楼层的名字
-      t:1,//判断是发送评论还是回复评论
+      commentId: 0, //用于保存回复评论时所在楼层的id
+      commentName: "", //用于保存回复评论时所在楼层的名字
+      t: 1, //判断是发送评论还是回复评论
     };
   },
   created() {
@@ -163,12 +171,15 @@ export default {
           offset: (this.currentPage - 1) * 100,
         },
       });
-      console.log(res);
+      // console.log(res);
       let data = res.data;
+
+      //判断是否有热门评论
       data.hotComments
         ? (this.hotCommentData = data.hotComments)
         : (this.hotCommentData = []);
       this.newCommentData = data.comments;
+      //判断是否有更多的热门评论
       data.moreHot ? (this.moreHot = data.moreHot) : (this.moreHot = false);
       this.total = data.total;
 
@@ -185,39 +196,87 @@ export default {
     },
 
     // 处理点击发送评论时的回调
-    async handleComment(){
-        let timestamp = Date.parse(new Date()),
-            id = this.sourceID,
-            type = this.commentType,
-            res = null ;
-        // 如果t为1 表示发送评论  post需要携带cookie 不然会报错301
-        if(this.t == 1){
-           res = await request({
-            url:"/comment",
-            method:"post",
-            data:{
-              t:this.t,
-              type,
-              id,
-              content:this.comment,
-              cookie:window.localStorage.getItem("cookie"),
-              timestamp
-            },
-          })
-           console.log(res);
-        }
+    async handleComment() {
+      console.log(this.$store.state.isLogin);
+      let t = this.t,
+        id = this.sourceID,
+        type = this.commentType,
+        content = this.comment,
+        commentId = this.commentId;
+      // 如果t为1 表示发送评论  post需要携带cookie 不然会报错301
 
-        this.getHotCommentData(id,type)
+      //判断是否登录
+      // if (!this.$store.state.isLogin) {
+      //   this.$message.warning("只有登陆后才能评论哦!");
+      //   return;
+      // }
+      //判断发送内容是否为空
+      if (content == "") {
+        this.$message({
+          message: "评论内容不能为空!",
+          type: "warning",
+        });
+        return;
+      }
 
+      this.submitComment(t, type, id, commentId, content);
+      //更新评论列表
+      this.getHotCommentData(id, type);
+    },
+    //提交评论的请求
+    async submitComment(t, type, id, commentId, content) {
+      let timestamp = Date.parse(new Date());
+      let res = await request({
+        url: "/comment",
+        method: "post",
+        data: {
+          t,
+          type,
+          id,
+          commentId,
+          content,
+          cookie: window.localStorage.getItem("cookie"),
+          timestamp,
+        },
+      });
+      if (res.data.code !== 200) {
+        this.$message.error("获取评论失败,请稍后重试!");
+      }
+      // console.log(res);
+    },
+
+    //监听input输入框
+    // inputComment() {
+    //   //如果t为2且comment为空时
+    //   if (this.t == 2 && this.comment == "") {
+    //     this.t = 1;
+    //   }
+    //   console.log(this.t);
+    // },
+    //输入框失去焦点,
+    blurComment() {
+      this.t = 1;
+      this.placeholderData = "留下你的评论";
     },
 
     // 处理点击回复时的回调
     handleRepled(id, name) {
-      this.comment = `回复${name}:`;
+      this.placeholderData = `回复@${name}`;
       //用于发送评论时的参数
-      this.commentID = id;
+      this.commentId = id;
       //t为2表示回复评论
-      this.t = 2
+      this.t = 2;
+      // 让评论框获得焦点
+      let input = document.querySelector(".inputArea");
+      // 阻止focus定位
+      input.children[0].focus({ preventScroll: true });
+
+      //回到评论框所处的位置
+      let comment = document.getElementById("comment");
+      window.scrollTo({
+        behavior:"smooth",
+        top: 0,
+      });
     },
   },
 };
@@ -225,6 +284,11 @@ export default {
 <style lang="less" scoped>
 #comment {
   width: 100%;
+}
+/deep/ .el-textarea__inner{
+  background-color: rgba(220,220,220,0.4);
+  border-color:  rgba(220,220,220,0.4);
+  
 }
 .submitComment {
   display: flex;
@@ -234,6 +298,7 @@ export default {
   line-height: 35px;
   flex-direction: row;
   margin: 20px 0;
+  color: #dcdcdc;
   span {
     font-size: 20px;
     margin-right: 10px;
@@ -249,7 +314,7 @@ export default {
 .el-button:valid {
   color: black;
   background-color: #f2f2f2;
-  border-color: #f2f2f2;
+  
 }
 
 .hotComment,
