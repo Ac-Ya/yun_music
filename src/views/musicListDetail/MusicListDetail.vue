@@ -57,7 +57,7 @@
         <div class="album" slot="album">专辑</div>
         <div class="burningTime" slot="burningTime">时长</div>
       </music-table>
-      <music-table-item :mData="musicData">
+      <music-table-item :mData="musicData" :musicListId="playListId">
         <i class="iconfont icon-xindong" slot="like"></i>
         <i class="iconfont icon-xiazai" slot="download"></i>
       </music-table-item>
@@ -89,11 +89,13 @@ export default {
       musicListData: null,
       musicData: [], //歌单的音乐详情列表
       hotCommentData:[],//热门评论数据
+      playListId:0,//歌单的id
     };
   },
   created() {
     // 要判断登录
-    console.log(this.$route.query.id);
+    // console.log(this.$route.query.id);
+    this.playListId = +this.$route.query.id
     this.getMusicListData(+this.$route.query.id);
   },
   computed: {
@@ -113,13 +115,13 @@ export default {
           id,
         },
       });
-      console.log(res);
+      // console.log(res);
       let data = res.data.playlist;
       /*
         1、如果isMore 为true 说明需要显示加载更多 
             然后判断用户是否登录，如果登录就显示加载更多
-            如果没登陆就不显示加载跟多
-        2、如何isMore 为false 
+            如果没登陆就不显示加载更多
+        2、如过isMore 为false 
           说明不需要显示加载更多
       */
       data.trackIds.length === data.tracks.length
@@ -151,6 +153,7 @@ export default {
       });
       this.isMore = false;
       this.musicData = res.data.songs;
+      this.$store.commit('currentMusicList',res.data.songs)
     },
     switchTag(e) {
       if (/(1|2|3)/.test(+e.target.id)) {
@@ -164,6 +167,9 @@ export default {
     //     method:'get'
     //   })
     // }
+    playMusic(e){
+      console.log(e);
+    }
   },
 };
 </script>

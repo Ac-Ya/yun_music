@@ -9,7 +9,7 @@
       v-for="(item, index) in officalListData"
       :key="item.id"
     >
-      <div class="coverImg" @click="toMusicListDetail(item.id)">
+      <div class="coverImg" @dblclick="toMusicListDetail(item.id)">
         <img :src="item.coverImgUrl" alt="" />
         <span>{{ item.updateFrequency }}</span>
       </div>
@@ -20,6 +20,7 @@
           v-for="(musicItem, indez) in officalListDetail[index] &&
           officalListDetail[index].slice(0, 5)"
           :key="musicItem.id"
+          @click="playMusic(musicItem.id)"
         >
           <span class="ranking" :class="{ showColor: indez < 3 }">{{
             indez + 1
@@ -132,6 +133,9 @@ export default {
         },
       });
     },
+    playMusic(id){
+      console.log(id);
+    }
   },
 };
 </script>

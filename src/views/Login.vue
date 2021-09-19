@@ -87,12 +87,7 @@ export default {
         let res = await request({
           url: "/login/cellphone",
           method: "post",
-          data: {
-            phone: this.loginForm.phone,
-            password: this.loginForm.password,
-            withCredentials: true,
-            timestamp
-          },
+          data:this.loginForm
         });
         if (res.data.code === 200) {
           this.$message({
@@ -108,7 +103,6 @@ export default {
           this.$router.push("/index");
         } else {
           this.$message({
-            // showClose: true,
             duration: 3000,
             message: `${res.data.msg}`,
             type: "error",
