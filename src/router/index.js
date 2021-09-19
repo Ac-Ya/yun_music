@@ -11,6 +11,8 @@ const NewMusic = () => import("views/discoverMusic/discoverMusicChild/NewMusic.v
 const Singer = () => import("views/discoverMusic/discoverMusicChild/Singer.vue")
 const Top = () => import("views/discoverMusic/discoverMusicChild/Top.vue")
 const MusicListDetail = () => import("views/musicListDetail/MusicListDetail.vue")
+
+
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -61,9 +63,14 @@ const routes = [
       {
         path: "/musicListDetail",
         component:MusicListDetail
-      }
+      },
+      // {
+      //   path: "/musicDetail",
+      //   component:MusicDetail
+      // }
     ]
-  }
+  },
+  
 ]
 
 const router = new VueRouter({
