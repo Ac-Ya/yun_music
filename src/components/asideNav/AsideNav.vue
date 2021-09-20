@@ -60,8 +60,7 @@ export default {
   methods: {
     to(key) {
       this.click = key;
-      console.log(key);
-        this.$router.push("/"+key)
+      this.$router.push("/"+key)
     },
   },
 };
