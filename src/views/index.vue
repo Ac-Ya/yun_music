@@ -16,7 +16,7 @@
         <router-view></router-view>
       </el-main>
     </el-container>
-      <music-detail class="musicDetail"></music-detail>
+      <music-detail class="musicDetail"  :class="{ hide: isShowDetail }"></music-detail>
 
       <bottom-control class="musicControl"></bottom-control>
   </el-container>
@@ -38,13 +38,21 @@ export default {
   props: {},
   data() {
     return {
-      show2: true,
+      isShowDetail:false
     };
   },
   created() {
     // 判断用户是否登录
   },
-  methods: {},
+  methods: {
+
+  },
+  watch:{
+     "$store.state.showDetail"(showDetail) {
+        this.isShowDetail = showDetail
+    
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -93,9 +101,15 @@ export default {
 
 .musicDetail {
   width: 100%;
-  background-color: white;
+  height: 0;
   position: fixed;
+  transition: height 0.5s linear;
+  background-color: #fff;
   z-index: 999;
   bottom: 70px;
+}
+.hide {
+  height: calc(100vh - 70px);
+  transition: height 0.5s linear;
 }
 </style>

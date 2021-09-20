@@ -40,7 +40,7 @@ export default {
   methods: {
     handleClick(key) {
       this.currentRoute = key; //修改当前点击的标签
-      this.$router.push("/discoverMusic/" + key);
+      this.$router.push("/discoverMusic/" + this.currentRoute);
     },
 
     // 字符串替换
@@ -48,6 +48,12 @@ export default {
       this.currentRoute = str.replace(fatherRoute,'')
     }
   },
+  watch:{
+    "$route.path"(n,o){
+        this.strReplace(n)
+      this.$router.push("/discoverMusic/" + this.currentRoute); 
+    }
+  }
 };
 </script>
 <style lang="less" scoped>
