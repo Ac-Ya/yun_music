@@ -13,24 +13,46 @@ export default {
   components: {
   },
   created(){
-    let store = this.$store
-    let musicListId =  window.localStorage.getItem("musicListId")
-    store.commit("modifyMusicId",window.localStorage.getItem('currentMusic'))
+    // let store = this.$store
+    // let musicListId =  window.localStorage.getItem("musicListId")
+    // this.getMusicListdata(musicListId)
   },
   methods:{
-    async getMusicListdata(musicListId){
-      let res = await request({
-        url:''
-      })
-    }
+    //获取音乐列表数据
+    // async getMusicListdata(id){
+    //   let res = await request({
+    //     url: "/playlist/detail",
+    //     method: "get",
+    //     params: {
+    //       id,
+    //     },
+    //   });
+    //   console.log(res);
+
+    //   let data = res.data.playlist;
+    //   //判断是否有更多数据
+    //   data.trackIds.length === data.tracks.length ? this.musicData = data.tracks : getIds(data.trackIds)
+    // },
+    // async getIds(trackIds) {
+    //   let ids = "";
+    //   trackIds.forEach((item) => {
+    //     ids += item.id + ",";
+    //   });
+    //   ids = ids.substr(0, ids.length - 1);
+    //   let res = await request({
+    //     url: "/song/detail",
+    //     method: "get",
+    //     params: {
+    //       ids
+    //     },
+    //   })
+    //   console.log(res);
+
+    // },
   },
+  
   beforeDestroy(){
-    let state = this.$store.state
-    // console.log(2);
-    // 获取vuex中currentMusic 和 musicListId
-    window.localStorage.setItem("currentMusic",state.currentMusic)
-    window.localStorage.setItem("musicListId",state.musicListId)
-    state = null
+    
   }
 }
 </script>
