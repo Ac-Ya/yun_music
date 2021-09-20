@@ -64,6 +64,7 @@ export default {
       store.commit("modifyMusicId", { musicId, index });
       store.commit("currentMusicList", this.mData);
       store.commit("modifyMusicListId",this.musicListId)
+      store.commit("currentPlayState",true)
       // console.log(musicId);
     },
   },
