@@ -1,109 +1,117 @@
 <template>
-  <div id="commemt">
-    <!-- 评论输入框 -->
-    <div class="commentArea">
-      <el-input
-        v-model="comment"
-        class="inputArea"
-        type="textarea"
-        maxlength="140"
-        show-word-limit
-        :placeholder="placeholderData"
-        @blur="blurComment"
-      >
-        <!-- @input="inputComment" -->
-      </el-input>
-      <div class="submitComment">
-        <span>@</span>
-        <span>#</span>
-        <el-button size="medium" round @click="handleComment">评论</el-button>
+  <div id="commemt" v-if="newCommentData.length !==0">
+    <div >
+      <!-- 评论输入框 -->
+      <div class="commentArea">
+        <el-input
+          v-model="comment"
+          class="inputArea"
+          type="textarea"
+          maxlength="140"
+          show-word-limit
+          :placeholder="placeholderData"
+          @blur="blurComment"
+        >
+          <!-- @input="inputComment" -->
+        </el-input>
+        <div class="submitComment">
+          <span>@</span>
+          <span>#</span>
+          <el-button size="medium" round @click="handleComment">评论</el-button>
+        </div>
       </div>
-    </div>
-    <!-- 热门评论 -->
-    <div class="hotComment" v-if="hotCommentData.length !== 0">
-      <div class="title">热门评论</div>
-      <div
-        class="commentListItem"
-        v-for="item in hotCommentData"
-        :key="item.id"
-      >
-        <img :src="item.user.avatarUrl" alt="" />
-        <div class="commentInfo">
-          <div class="userInfo">
-            <span class="name">{{ item.user.nickname }}:</span>
-            <span class="commentDetail">{{ item.content }}</span>
-          </div>
-          <div class="floorComment" v-if="item.parentCommentId !== 0">
-            <span class="name"
-              >@{{ item.beReplied[0].user.nickname + ":" }}</span
-            >
-            <span class="commentDetail">{{ item.beReplied[0].content }}</span>
-          </div>
-          <div class="commentDate">
-            <span class="date">{{ commentTime(item.time) }}</span>
-            <div class="commentControl">
-              <div><i class="iconfont icon-zan"></i>{{ item.likedCount }}</div>
-              <i class="iconfont icon-fenxiang"></i>
-              <!-- 点击回复时传入当前的楼层的id 和 评论的名字 -->
-              <i
-                class="iconfont icon-huifu"
-                @click="handleRepled(item.commentId, item.user.nickname)"
-              ></i>
+      <!-- 热门评论 -->
+      <div class="hotComment" v-if="hotCommentData.length !== 0">
+        <div class="title">热门评论</div>
+        <div
+          class="commentListItem"
+          v-for="item in hotCommentData"
+          :key="item.id"
+        >
+          <img :src="item.user.avatarUrl" alt="" />
+          <div class="commentInfo">
+            <div class="userInfo">
+              <span class="name">{{ item.user.nickname }}:</span>
+              <span class="commentDetail">{{ item.content }}</span>
+            </div>
+            <div class="floorComment" v-if="item.parentCommentId !== 0">
+              <span class="name"
+                >@{{ item.beReplied[0].user.nickname + ":" }}</span
+              >
+              <span class="commentDetail">{{ item.beReplied[0].content }}</span>
+            </div>
+            <div class="commentDate">
+              <span class="date">{{ commentTime(item.time) }}</span>
+              <div class="commentControl">
+                <div>
+                  <i class="iconfont icon-zan"></i>{{ item.likedCount }}
+                </div>
+                <i class="iconfont icon-fenxiang"></i>
+                <!-- 点击回复时传入当前的楼层的id 和 评论的名字 -->
+                <i
+                  class="iconfont icon-huifu"
+                  @click="handleRepled(item.commentId, item.user.nickname)"
+                ></i>
+              </div>
             </div>
           </div>
+          <div class="line"></div>
         </div>
-        <div class="line"></div>
       </div>
-    </div>
-    <!-- 加载更多 -->
-    <div v-show="moreHot" class="loadMore" @click="loadMore">更多热门评论></div>
-    <!-- 最新评论 -->
-    <div class="newComment" v-if="newCommentData.length !== 0">
-      <div class="title">最新评论</div>
-      <div
-        class="commentListItem"
-        v-for="item in newCommentData"
-        :key="item.id"
-      >
-        <img :src="item.user.avatarUrl" alt="" />
-        <div class="commentInfo">
-          <div class="userInfo">
-            <span class="name">{{ item.user.nickname }}:</span>
-            <span class="commentDetail">{{ item.content }}</span>
-          </div>
-          <div class="floorComment" v-if="item.parentCommentId !== 0">
-            <span class="name"
-              >@{{ item.beReplied[0].user.nickname + ":" }}</span
-            >
-            <span class="commentDetail">{{ item.beReplied[0].content }}</span>
-          </div>
-          <div class="commentDate">
-            <span class="date">{{ commentTime(item.time) }}</span>
-            <div class="commentControl">
-              <div><i class="iconfont icon-zan"></i>{{ item.likedCount }}</div>
-              <i class="iconfont icon-fenxiang"></i>
-              <i
-                class="iconfont icon-huifu"
-                @click="handleRepled(item.commentId, item.user.nickname)"
-              ></i>
+      <!-- 加载更多 -->
+      <div v-show="moreHot" class="loadMore" @click="loadMore" >
+        更多热门评论>
+      </div>
+      <!-- 最新评论 -->
+      <div class="newComment" v-if="newCommentData.length !== 0">
+        <div class="title">最新评论</div>
+        <div
+          class="commentListItem"
+          v-for="item in newCommentData"
+          :key="item.id"
+        >
+          <img :src="item.user.avatarUrl" alt="" />
+          <div class="commentInfo">
+            <div class="userInfo">
+              <span class="name">{{ item.user.nickname }}:</span>
+              <span class="commentDetail">{{ item.content }}</span>
+            </div>
+            <div class="floorComment" v-if="item.parentCommentId !== 0">
+              <span class="name"
+                >@{{ item.beReplied[0].user.nickname + ":" }}</span
+              >
+              <span class="commentDetail">{{ item.beReplied[0].content }}</span>
+            </div>
+            <div class="commentDate">
+              <span class="date">{{ commentTime(item.time) }}</span>
+              <div class="commentControl">
+                <div>
+                  <i class="iconfont icon-zan"></i>{{ item.likedCount }}
+                </div>
+                <i class="iconfont icon-fenxiang"></i>
+                <i
+                  class="iconfont icon-huifu"
+                  @click="handleRepled(item.commentId, item.user.nickname)"
+                ></i>
+              </div>
             </div>
           </div>
+          <div class="line"></div>
         </div>
-        <div class="line"></div>
       </div>
-    </div>
-    <!-- 分页 -->
-    <div class="pages">
-      <el-pagination
-        v-if="!(total < 100)"
-        background
-        layout="prev, pager, next"
-        :total="total"
-        :page-size="100"
-        :current-page="currentPage"
-        @current-change="pageChange"
-      >
-      </el-pagination>
+      <!-- 分页 -->
+      <div class="pages">
+        <el-pagination
+          v-if="!(total < 100)"
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :page-size="100"
+          :current-page="currentPage"
+          @current-change="pageChange"
+        >
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -161,14 +169,16 @@ export default {
   methods: {
     //获取评论数据
     async getHotCommentData(id, type) {
+      this.hotCommentData =[]
+      this.newCommentData = []
       let res = await request({
         url: "/comment/" + this.commentTypes[type],
         method: "get",
         params: {
           id,
           type,
-          limit: 100,
-          offset: (this.currentPage - 1) * 100,
+          limit: 50,
+          offset: (this.currentPage - 1) * 50,
         },
       });
       // console.log(res);
@@ -274,9 +284,14 @@ export default {
       //回到评论框所处的位置
       let comment = document.getElementById("comment");
       window.scrollTo({
-        behavior:"smooth",
+        // behavior:"smooth",
         top: 0,
       });
+    },
+  },
+  watch: {
+    sourceID(nV, oV) {
+      this.getHotCommentData(nV, this.commentType);
     },
   },
 };
@@ -285,11 +300,11 @@ export default {
 #comment {
   width: 100%;
 }
-/deep/ .el-textarea__inner{
-  background-color: rgba(220,220,220,0.4);
-  border-color:  rgba(220,220,220,0.4);
-  
-}
+// /deep/ .el-textarea__inner{
+//   // background-color: rgba(220,220,220,0.4);
+//   // border-color:  rgba(220,220,220,0.4);
+
+// }
 .submitComment {
   display: flex;
   position: relative;
@@ -314,7 +329,6 @@ export default {
 .el-button:valid {
   color: black;
   background-color: #f2f2f2;
-  
 }
 
 .hotComment,

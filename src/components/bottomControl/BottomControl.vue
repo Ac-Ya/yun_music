@@ -5,7 +5,6 @@
       ref="audioPlayer"
       @timeupdate="timeUpdate"
       @ended="playEnd"
-      @play="playMusic"
       autoplay
     ></audio>
     <div class="coverImg">
@@ -46,8 +45,9 @@
           v-model="progressTime"
           :show-tooltip="false"
           class="progress"
-          :max="(musicDetail ? musicDetail.dt : 100) | maxLength"
+      
         ></el-slider>
+            <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
         <span>{{ (musicDetail ? musicDetail.dt : 0) | handleMusicTime }}</span>
       </div>
     </div>
@@ -59,6 +59,7 @@
 
 <script>
 let preTime = 0;
+let durationNum = 0
 import { request } from "network/request.js";
 import { handleMusicTime, randomNum } from "plugins/utils.js";
 export default {
@@ -107,7 +108,7 @@ export default {
     handlePlay() {
       let isPlay = !this.isPlay;
       let audioPlayer = this.$refs.audioPlayer;
-      if (isPlay) {
+      if (isPlay && this.musicUrl) {
         audioPlayer.play();
       } else {
         audioPlayer.pause();
@@ -117,9 +118,9 @@ export default {
       this.$store.commit("currentPlayState", isPlay);
     },
     // palyMusic
-    playMusic(){
-      this.$refs.audioPlayer.play()
-    },
+    // playMusic() {
+    //   this.$refs.audioPlayer.play();
+    // },
 
     // 处理鼠标移入移除事件
     enter() {
@@ -137,29 +138,28 @@ export default {
     //进度条改变
     changeProgress(value) {
       this.currentTime = value;
-      this.$refs.audioPlayer.currentTime = value;
+      this.$refs.audioPlayer.currentTime =  Math.floor((value / 100) * durationNum);;
     },
     //播放时间的监听
     timeUpdate() {
       //获取当前播放时间
       let time = this.$refs.audioPlayer.currentTime;
+      this.$store.commit("modifyPlayTime",time)
       time = Math.floor(time);
       this.currentTime = time;
-      this.progressTime = time-1;
+      this.progressTime = Math.floor((time / durationNum) * 100);;
     },
 
     //音乐播放结束
     playEnd() {
-
       // 判断播放模式，如果是循环播放
-      let currentIcon = this.$store.state.musicModel
-      console.log(currentIcon);
-      if(currentIcon == 2){
-        this.$refs.audioPlayer.play()
-      }else{
-        this.changeMusic("next")
+      let currentIcon = this.$store.state.musicModel;
+      // console.log(currentIcon);
+      if (currentIcon == 2) {
+        this.$refs.audioPlayer.play();
+      } else {
+        this.changeMusic("next");
       }
-
     },
     //切换音乐
     changeMusic(model) {
@@ -178,12 +178,12 @@ export default {
         if (model == "next") {
           index = index + 1;
           index >= listLength ? (index = 0) : index;
-          this.modify(index,currentMusicList)
+          this.modify(index, currentMusicList);
           return;
         } else {
           index = index - 1;
           index < 0 ? (index = listLength - 1) : index;
-          this.modify(index,currentMusicList)
+          this.modify(index, currentMusicList);
           return;
         }
       } else if (currentIcon == 1) {
@@ -192,19 +192,17 @@ export default {
         if (model == "next") {
           index = index + num;
           index >= listLength ? (index = 0) : index;
-          this.modify(index,currentMusicList)
+          this.modify(index, currentMusicList);
           return;
         } else {
           index = index - num;
           inex < 0 ? (index = listLength - 1) : index;
-          this.modify(index,currentMusicList)
+          this.modify(index, currentMusicList);
         }
       }
-
-     
     },
     //修改音乐Id ,index
-    modify(index,currentMusicList) {
+    modify(index, currentMusicList) {
       this.$store.commit("modifyMusicId", {
         musicId: currentMusicList[index].id,
         index,
@@ -224,7 +222,7 @@ export default {
       let data = res.data.songs[0];
       this.musicDetail = data;
       this.totalTime = parseInt(data.dt / 1000) + 1;
-
+      durationNum = parseInt(data.dt / 1000) + 1;
       (data = null), (res = null);
     },
     //获取歌曲的url
@@ -270,7 +268,11 @@ export default {
     flex-direction: column;
     font-size: 14px;
     span {
+      width: 120px;
       margin-bottom: 5px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
