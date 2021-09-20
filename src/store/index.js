@@ -19,7 +19,8 @@ export default new Vuex.Store({
     // musicList2:[],//保存进入音乐列表时的歌单
 
     isPlay: false,//当前播放状态
-    showDetail:false,
+    showDetail: false,
+    currentPlayTime:0,//当前播放时间
   },
   mutations: {
     UID(state,payload) {
@@ -35,7 +36,6 @@ export default new Vuex.Store({
       state.currentMusic = payload
     },
     currentMusicList(state, payload) {
-      console.log(payload);
       state.musicList = payload
     },
     currentPlayState(state, payload) {
@@ -46,6 +46,9 @@ export default new Vuex.Store({
     },
     modifyMusicListId(state, payload) {
       state.musicListId = payload
+    },
+    modifyPlayTime(state, payload) {
+      state.currentPlayTime = payload
     }
   },
   actions: {
