@@ -9,7 +9,9 @@ import "./assets/css/base.css"
 import "./assets/iconfontCss/iconfont.css"
 import 'element-ui/lib/theme-chalk/index.css';
 import less from 'less'
+// event-bus.js
 
+Vue.prototype.$EventBus = new Vue()
 
 
 Vue.use(less)
