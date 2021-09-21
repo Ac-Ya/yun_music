@@ -11,6 +11,9 @@ const NewMusic = () => import("views/discoverMusic/discoverMusicChild/NewMusic.v
 const Singer = () => import("views/discoverMusic/discoverMusicChild/Singer.vue")
 const Top = () => import("views/discoverMusic/discoverMusicChild/Top.vue")
 const MusicListDetail = () => import("views/musicListDetail/MusicListDetail.vue")
+const Video = () => import("views/video/Video.vue")
+const MVideo = () => import("views/video/videoChildren/MVideo.vue")
+const MV = () => import("views/video/videoChildren/MV.vue")
 
 
 // 解决ElementUI导航栏中的vue-router在3.0版本以上重复点菜单报错问题
@@ -64,10 +67,21 @@ const routes = [
         path: "/musicListDetail",
         component:MusicListDetail
       },
-      // {
-      //   path: "/musicDetail",
-      //   component:MusicDetail
-      // }
+      {
+        path: '/video',
+        component: Video,
+        redirect: '/video/mVideo',
+        children: [
+          {
+            path: "/video/mVideo",
+            component:MVideo
+          },
+          {
+            path: "/video/MV",
+            component:MV
+          }
+        ]
+      }
     ]
   },
   
