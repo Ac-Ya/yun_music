@@ -50,7 +50,7 @@ export default {
   },
   watch:{
     "$route.path"(n,o){
-        this.strReplace(n)
+      this.strReplace(n)
       this.$router.push("/discoverMusic/" + this.currentRoute); 
     }
   }
@@ -79,7 +79,6 @@ export default {
     display: block;
     height: 35px;
     line-height: 35px;
-
 }
 .barItem:hover{
     font-weight: bold;

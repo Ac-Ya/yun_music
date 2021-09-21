@@ -24,7 +24,7 @@
     :tag="currentTag" 
     @child="switchTag" 
     @showAll="showAllTag">
-      <el-card class="box-card allTags" slot="allTag"   v-show="show">
+      <el-card class="box-card allTags " slot="allTag"   v-show="show">
         <div slot="header" class="clearfix">
           <span>全部歌单</span>
         </div>
@@ -443,14 +443,14 @@ export default {
   margin: 20px 0 80px 0;
 }
 
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-}
-.clearfix:after {
-  clear: both;
-}
+// .clearfix:before,
+// .clearfix:after {
+//   display: table;
+//   content: "";
+// }
+// .clearfix:after {
+//   clear: both;
+// }
 
 .box-card {
   width: 800px;

@@ -6,24 +6,24 @@
     <!-- 官方榜数据 -->
     <div
       class="topItem"
-      v-for="(item, index) in officalListData"
+      v-for="(item, indez) in officalListData"
       :key="item.id"
     >
-      <div class="coverImg" @dblclick="toMusicListDetail(item.id)">
+      <div class="coverImg" @click="toMusicListDetail(item.id)">
         <img :src="item.coverImgUrl" alt="" />
         <span>{{ item.updateFrequency }}</span>
       </div>
       <div class="musicList">
         <div
           class="musicListItem"
-          :class="{ showBackground: indez % 2 == 0 }"
-          v-for="(musicItem, indez) in officalListDetail[index] &&
-          officalListDetail[index].slice(0, 5)"
+          :class="{ showBackground: index % 2 == 0 }"
+          v-for="(musicItem, index) in officalListDetail[indez] &&
+          officalListDetail[indez].slice(0, 5)"
           :key="musicItem.id"
-          @click="playMusic(musicItem.id)"
+          @dblclick="playMusic(musicItem.id,index,indez,item.id)"
         >
-          <span class="ranking" :class="{ showColor: indez < 3 }">{{
-            indez + 1
+          <span class="ranking" :class="{ showColor: index < 3 }">{{
+            index + 1
           }}</span>
           <span class="musicName">{{ musicItem.name }}</span>
           <span class="singer"
@@ -34,7 +34,7 @@
       </div>
     </div>
     <!-- 全球榜数据 -->
-    <div class="listTitle">
+    <div class="listTitle" v-if="globalListData !== null">
       <span>全球榜</span>
     </div>
     <div class="globalList" v-if="globalListData !== null">
@@ -94,6 +94,7 @@ export default {
         method: "get",
       });
       let data = res.data.list.slice(0, 4);
+      console.log(data);
       this.officalListData = data;
       data.slice(0, 4).forEach((item, index) => {
         this.getOfficalListDetail(item.id);
@@ -133,8 +134,15 @@ export default {
         },
       });
     },
-    playMusic(id){
-      console.log(id);
+    playMusic(musicId,index,indez,musicListId){
+      // index 是榜单所在索引
+      //indez 是歌曲在榜单中的索引
+      let store =  this.$store
+      //将当前音乐id保存在vuex中
+      store.commit("modifyMusicId", { musicId, index });
+      store.commit("currentMusicList", this.officalListDetail[indez]);
+      store.commit("modifyMusicListId",musicListId)
+      store.commit("currentPlayState",true)
     }
   },
 };
