@@ -45,9 +45,8 @@
           v-model="progressTime"
           :show-tooltip="false"
           class="progress"
-      
         ></el-slider>
-            <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
+        <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
         <span>{{ (musicDetail ? musicDetail.dt : 0) | handleMusicTime }}</span>
       </div>
     </div>
@@ -58,8 +57,7 @@
 </template>
 
 <script>
-let preTime = 0;
-let durationNum = 0
+let durationNum = 0;
 import { request } from "network/request.js";
 import { handleMusicTime, randomNum } from "plugins/utils.js";
 export default {
@@ -81,7 +79,7 @@ export default {
       showUp: false,
       musicDetail: null,
       totalTime: 0,
-      currentIndex: 0,
+      currentIndex: -1,
     };
   },
   computed: {
@@ -138,16 +136,18 @@ export default {
     //进度条改变
     changeProgress(value) {
       this.currentTime = value;
-      this.$refs.audioPlayer.currentTime =  Math.floor((value / 100) * durationNum);;
+      this.$refs.audioPlayer.currentTime = Math.floor(
+        (value / 100) * durationNum
+      );
     },
     //播放时间的监听
     timeUpdate() {
       //获取当前播放时间
       let time = this.$refs.audioPlayer.currentTime;
-      this.$store.commit("modifyPlayTime",time)
+      this.$store.commit("modifyPlayTime", time);
       time = Math.floor(time);
       this.currentTime = time;
-      this.progressTime = Math.floor((time / durationNum) * 100);;
+      this.progressTime = Math.floor((time / durationNum) * 100);
     },
 
     //音乐播放结束
@@ -164,12 +164,18 @@ export default {
     //切换音乐
     changeMusic(model) {
       let state = this.$store.state;
-      // console.log(state);
+      // console.log(state.currentMusic);
+      // console.log(state.musicList);
+      // console.log(state.musicListId);
       // 获取当前的音乐播放模式
       let currentIcon = state.musicModel;
       // console.log(currentIcon);
       //获取当前音乐所在index,和当前音乐所在的音乐列表,当前音乐列表的长度
-      let index = this.currentIndex;
+      let index = state.currentMusic.index;
+      console.log(index);
+      if (index == -1) {
+        return;
+      }
       let currentMusicList = state.musicList;
       let listLength = currentMusicList.length;
 
@@ -238,6 +244,7 @@ export default {
       // console.log(res);
       if (res.data.data[0].url == null) {
         this.$message.error("该歌曲暂无版权，将为您播放下一首歌曲");
+        this.changeMusic("next")
         return;
       }
       this.musicUrl = res.data.data[0].url;
