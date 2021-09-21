@@ -1,6 +1,6 @@
 <template>
   <div id="commemt" v-if="newCommentData.length !==0">
-    <div >
+    <div class="comment">
       <!-- 评论输入框 -->
       <div class="commentArea">
         <el-input
@@ -164,11 +164,13 @@ export default {
     };
   },
   created() {
+    console.log(this.sourceID, this.commentType);
     this.getHotCommentData(this.sourceID, this.commentType);
   },
   methods: {
     //获取评论数据
     async getHotCommentData(id, type) {
+      var timestamp = Date.parse(new Date());
       this.hotCommentData =[]
       this.newCommentData = []
       let res = await request({
@@ -179,9 +181,10 @@ export default {
           type,
           limit: 50,
           offset: (this.currentPage - 1) * 50,
+          timestamp
         },
       });
-      // console.log(res);
+      console.log(res);
       let data = res.data;
 
       //判断是否有热门评论
@@ -207,13 +210,14 @@ export default {
 
     // 处理点击发送评论时的回调
     async handleComment() {
-      console.log(this.$store.state.isLogin);
+      // console.log(this.$store.state.isLogin);
       let t = this.t,
         id = this.sourceID,
         type = this.commentType,
         content = this.comment,
         commentId = this.commentId;
       // 如果t为1 表示发送评论  post需要携带cookie 不然会报错301
+      console.log(id,type);
 
       //判断是否登录
       // if (!this.$store.state.isLogin) {
@@ -231,7 +235,8 @@ export default {
 
       this.submitComment(t, type, id, commentId, content);
       //更新评论列表
-      this.getHotCommentData(id, type);
+      // 清空输入框
+      this.comment = ''
     },
     //提交评论的请求
     async submitComment(t, type, id, commentId, content) {
@@ -248,10 +253,15 @@ export default {
           cookie: window.localStorage.getItem("cookie"),
           timestamp,
         },
+
       });
+      console.log(res);
       if (res.data.code !== 200) {
         this.$message.error("获取评论失败,请稍后重试!");
+      }else{
+        this.getHotCommentData(id, type);
       }
+      timestamp = null
       // console.log(res);
     },
 
@@ -282,11 +292,12 @@ export default {
       input.children[0].focus({ preventScroll: true });
 
       //回到评论框所处的位置
-      let comment = document.getElementById("comment");
-      window.scrollTo({
-        // behavior:"smooth",
+      let comment = document.querySelector(".comment");
+        comment.scrollTo({
+        behavior:"smooth",
         top: 0,
       });
+      
     },
   },
   watch: {

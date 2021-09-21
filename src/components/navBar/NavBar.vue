@@ -14,7 +14,7 @@
         <div
           class="playlistTagItem"
           :class="{ isShow: tag === item.name }"
-          @click="switchTag(item.name)"
+          @click="switchTag(item.name,item.id)"
           v-for="item in tags"
           :key="item.id"
         >
@@ -45,8 +45,8 @@ export default {
     };
   },
   methods:{
-    switchTag(tag){
-      this.$emit("child",tag)
+    switchTag(tag,tagId){
+      this.$emit("child",tag,tagId)
     },
     showAllTag(){
       this.show = !this.show
