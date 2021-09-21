@@ -11,13 +11,13 @@
     <div class="myMusic">我的音乐</div>
     <ul
       class="personOperation"
-      v-for="(val, key) in operationList2"
-      :key="key"
-      @click="to(key)"
+      v-for="(val2, key2) in operationList2"
+      :key="key2"
+      @click="to(key2)"
     >
-      <li :class="{ pickOn: click === key }">
-        <i class="iconfont" :class="iconfontList[key]"></i>
-        <span>{{ val }}</span>
+      <li :class="{ pickOn: click === key2 }">
+        <i class="iconfont" :class="iconfontList[key2]"></i>
+        <span>{{ val2 }}</span>
       </li>
     </ul>
   </div>
@@ -39,7 +39,6 @@ export default {
         PrivateFM: "私人FM",
       },
       operationList2: {
-        downloadManager: "下载管理",
         recentPlay: "最近播放",
         cloudDisk: "音乐云盘",
         collection: "我的收藏",
@@ -47,7 +46,6 @@ export default {
         collectPlaylist: "收藏的歌单",
       },
       iconfontList: {
-        downloadManager: "icon-xiazaiguanli",
         recentPlay: "icon-zuijinbofang",
         cloudDisk: "icon-yunpan",
         collection: "icon-favorite",
@@ -56,13 +54,22 @@ export default {
       },
     };
   },
-  created() {},
+  created() {
+    },
   methods: {
     to(key) {
       this.click = key;
-      this.$router.push("/"+key)
+      this.$router.push("/" + key);
     },
+
   },
+
+  // watch: {
+  //   "$route.path"(n,o){
+  //     this.strReplace(n)
+  //     // this.$router.push(n);
+  //   }
+  // },
 };
 </script>
 <style lang="less" scoped>
