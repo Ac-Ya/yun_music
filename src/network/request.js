@@ -16,31 +16,26 @@ export function request(config) {
     // })
 
     instance.interceptors.request.use(config => {
-        config.Cookie = window.localStorage.getItem('cookie')
+        // console.log(config);
+        // config.headers = window.localStorage.getItem('cookie')
         return config
     }, err => {
         console.log(err);
     });
 
     instance.interceptors.response.use(config => {
+        // console.log(config);
         return config;
     }, err => {
         console.log([err]);
         if (err.response.data.msg == '需要登录') {
-            // cookie过期 退出登录
-            // console.log(window.localStorage.getItem("userInfo"));
-            // window.localStorage.setItem("userInfo", "");
-            // 刷新页面
-            // history.go(0)
-            // 修改当前的登录状态
-            // this.state.isLogin = false;
+           
             console.log(err.response.data.msg);
 
         } else {
-            console.log(err.response.data.msg);
+            console.log(err.response.message);
         }
     });
-    // instance.defaults.withCredentials = true;
-
+    instance.defaults.withCredentials = true;
     return instance(config) 
 }
