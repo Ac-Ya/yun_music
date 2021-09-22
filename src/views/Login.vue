@@ -87,7 +87,9 @@ export default {
         let res = await request({
           url: "/login/cellphone",
           method: "post",
-          data:this.loginForm
+          data:this.loginForm,
+          withCredentials: true, 
+          timestamp
         });
         if (res.data.code === 200) {
           this.$message({
@@ -100,6 +102,7 @@ export default {
           window.localStorage.setItem("uid", res.data.profile.userId);
           this.$store.commit("UID", res.data.profile.userId);
           this.$store.commit("updataLoginState", true);
+
           this.$router.push("/index");
         } else {
           this.$message({
