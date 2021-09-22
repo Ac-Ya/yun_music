@@ -38,7 +38,7 @@ const  formatDate = (date, fmt) =>{
 }
 
 // num接收的数字,point保留数字的第几位
-const tranNumber = (num, point) => {
+const tranNumber = (num, point = 2) => {
     // 将数字转换为字符串,然后通过split方法用.分隔,取到第0个
     let numStr = num.toString().split('.')[0]
     if (numStr.length < 5) { // 判断数字有多长,如果小于5,表示1万以内的数字,让其直接显示
@@ -85,7 +85,6 @@ const randomNum = (minNum, maxNum) =>{
         break;
       case 2:
         return parseInt(Math.random() * ( maxNum - minNum + 1 ) + minNum, 10);
-        //或者 Math.floor(Math.random()*( maxNum - minNum + 1 ) + minNum );
         break;
       default:
         return 0;
@@ -108,6 +107,16 @@ const handleMusicTime = (time)=> {
     s = s < 10 ? '0' + s : s;
     return m + ':' + s;
 }
+const  handleNum = (num) =>{
+    if (num > 10000) {
+        num = (num / 10000).toFixed(2)
+        return num + '万';
+    } else {
+        return num;
+    }
+}
+
+
 module.exports =  {
     tranNumber,
     timestampFormat,
@@ -115,5 +124,6 @@ module.exports =  {
     formatTime,
     formatDate,
     handleMusicTime,
-    randomNum
+    randomNum,
+    handleNum
 }
