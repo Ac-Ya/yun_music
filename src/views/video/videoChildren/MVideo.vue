@@ -1,44 +1,64 @@
 <template>
   <div id="mVideo">
-    <!-- 导航栏 -->
-    <nav-bar
-      :tags="hotTags"
-      :tag="currentTag"
-      @child="handleSwitch"
-      @showAll="showAll"
-    >
-      <el-card
-        class="box-card allTags"
-        slot="allTag"
-        v-loading="loading"
-        element-loading-background="rgba(255, 255, 255,1)"
-        v-show="show"
-      >
-        <div slot="header" class="allVideo">
-          <span>全部视频</span>
-        </div>
-        <div class="text item">
-          <span
-            :class="{ categoryTag: item.name === currentTag }"
-            v-for="item in allTags"
-            :key="item.id"
-            @click="handleSwitch(item.name,item.id)"
-            >{{ item.name }}</span
-          >
-        </div>
-      </el-card>
-    </nav-bar>
+
     <!-- 列表数据 -->
-    <div class="videoList">
-      <div class="vide-item">
-        <img src="../../../assets/img/tx.png" alt="" > 
+    <div
+      v-if="videoList !== null"
+      class="videoList"
+      v-infinite-scroll="load"
+      infinite-scroll-distance="100"
+      :infinite-scroll-disabled="disabled"
+      :infinite-scroll-immediate="false"
+      infinite-scroll-delay="300"
+      v-loading="loading"
+      element-loading-spinner="el-icon-loading"
+    >
+    <!-- 导航栏 -->
+
+      <nav-bar
+        :tags="hotTags"
+        :tag="currentTag"
+        @child="handleSwitch"
+        @showAll="showAll"
+      >
+        <el-card
+          class="box-card allTags"
+          slot="allTag"
+          v-loading="loading"
+          element-loading-background="rgba(255, 255, 255,1)"
+          v-show="show"
+        >
+          <div slot="header" class="allVideo">
+            <span>全部视频</span>
+          </div>
+          <div class="text item">
+            <span
+              :class="{ categoryTag: item.name === currentTag }"
+              v-for="item in allTags"
+              :key="item.id"
+              @click="handleSwitch(item.name, item.id)"
+              >{{ item.name }}</span
+            >
+          </div>
+        </el-card>
+      </nav-bar>
+      <div class="vide-item" v-for="item in videoList" :key="item.data.id">
+        <img :src="item.data.coverUrl" alt="" />
         <div class="playCount">
           <i class="iconfont icon-bofang4"></i>
-          <span>262万</span>
+          <span>{{ item.data.durationms | handleNum }}</span>
         </div>
-        <div class="time">01:03</div>
-        <div class="desc">一到夏天，哈奇士就喜欢进冰箱睡觉拉都拉不</div>
-        <div class="ar">by原点FM</div>
+        <div class="time">{{ item.data.playTime | handleMusicTime }}</div>
+        <div class="desc">
+          {{ item.data.title ? item.data.title : item.data.name }}
+        </div>
+        <div class="ar">
+          {{
+            item.data.creator
+              ? item.data.creator.nickname
+              : item.data.artists[0].name
+          }}
+        </div>
       </div>
     </div>
   </div>
@@ -49,12 +69,14 @@ import NavBar from "components/navBar/NavBar.vue";
 import { request } from "network/request.js";
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
+import { handleNum, handleMusicTime } from "../../../plugins/utils";
+
 export default {
   name: "MVideo",
   components: {
     NavBar,
     CardList,
-    CardListItem
+    CardListItem,
   },
   props: {},
   data() {
@@ -62,10 +84,18 @@ export default {
       currentTag: "", //视频当前标签
       hotTags: [], //视频热门标签
       allTags: [], //所有标签
-      loading: true,
-      show: false,
-      currentTagId:''
+      show: false, //是否显示所有标签
+      currentTagId: 0, //当前tag的id
+      currentPage: 1, //当前页
+      videoList: [], //视频列表数据
+      hasMore: true, //是否有更多数据
+      disabled: false, //是否无限加载
+      loading: true, //是否显示正在加载
     };
+  },
+  filters: {
+    handleNum,
+    handleMusicTime,
   },
   created() {
     this.getVideoHotTags();
@@ -82,17 +112,18 @@ export default {
       });
       this.hotTags = res.data.data;
       this.currentTag = res.data.data[0].name;
-      this.currentTagId = res.data.data[0].id
+      this.currentTagId = res.data.data[0].id;
       if (res.data.message !== "success") {
         console.log("错误请求，请稍后再试！");
       }
-      console.log(res);
+      // console.log(res);
       res = null;
     },
     //切换标签
-    handleSwitch(tag,tagId) {
+    handleSwitch(tag, tagId) {
       this.currentTag = tag;
-      this.currentTagId = tagId
+      this.currentTagId = tagId;
+      this.show = false;
     },
     //获取视频全部标签
     async getVideoAllTags() {
@@ -114,35 +145,62 @@ export default {
       this.getVideoAllTags();
     },
     //根据标签获取视频列表数据
-    async getVideoListData(id){
-       let timestamp = Date.parse(new Date());
-      let res = await request({
-        url:"/video/group",
-        method:"get",
-        params:{
-          id,
-          timestamp,
-          cookie:window.localStorage.getItem('cookie')
-        },
+    async getVideoListData(id) {
+      this.loading = true;
+      let i = 2;
+      let timestamp = Date.parse(new Date());
 
-      
-      })
-      console.log(res);
-    }
+      while (i && this.hasMore) {
+        let res = await request({
+          url: "/video/group",
+          method: "get",
+          params: {
+            id,
+            offset: (this.currentPage - 1) * 8,
+            timestamp,
+            cookie: window.localStorage.getItem("cookie"),
+          },
+        });
+        // console.log(res);
+        this.currentPage += 1;
+        this.hasMore = res.data.hasmore;
+        this.videoList.push(...res.data.datas);
+        i--;
+      }
+      (i = null), (timestamp = null);
+      this.loading = false;
+    },
+
+    //触底事件
+    load() {
+      // console.log(1);
+      if (this.hasMore) {
+        this.getVideoListData(this.currentTagId);
+      }
+      this.disabled = true;
+    },
   },
-  watch:{
-    currentTagId(nId,oId){
-      this.getVideoListData(nId)
-    }
-  }
+  mounted() {},
+  watch: {
+    currentTagId(nId, oId) {
+      this.currentPage = 1;
+      this.videoList = [];
+      this.getVideoListData(nId);
+    },
+    videoList() {
+      if (this.hasMore) {
+        this.disabled = false;
+      } else {
+        this.disabled = true;
+      }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>
 #mVideo {
-  padding: 20px 100px 0 100px;
+  padding: 20px 0 0 100px;
   width: 100%;
-  height: 1000px;
-
 }
 
 .box-card {
@@ -178,48 +236,50 @@ export default {
   color: #ec4141;
   font-weight: bold;
 }
-.videoList{
+.videoList {
   width: 100%;
   min-width: 1100px;
+  height: calc(100vh - 200px);
   display: flex;
-   flex-wrap: wrap;
-
+  flex-wrap: wrap;
+  margin-bottom: 100px;
+  overflow-y: scroll;
 }
-.vide-item{
+.vide-item {
   position: relative;
   width: 23%;
   margin: 10px 20px 10px 0;
-  img{
+  img {
     position: relative;
     width: 100%;
     height: 150px;
     border-radius: 8px;
   }
-  .playCount{
+  .playCount {
     position: absolute;
     top: 5px;
     right: 5px;
     color: white;
     font-size: 14px;
   }
-  .time{
+  .time {
     position: absolute;
     right: 5px;
     top: 130px;
     color: white;
     font-size: 12px;
   }
-  .desc,.ar{
+  .desc,
+  .ar {
     width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     font-size: 12px;
   }
-  .ar{
+  .ar {
     margin-top: 5px;
-    color:#D3D3D3;
+    color: #d3d3d3;
   }
-  
 }
 </style>
