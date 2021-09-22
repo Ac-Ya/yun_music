@@ -53,7 +53,8 @@ export default {
   position: fixed;
   z-index: 999;
   background-color: white;
-  margin-left: 10px;
+  margin-left: 20px;
+  padding-top: 10px;
 }
 .barItem {
   margin-right: 20px;
