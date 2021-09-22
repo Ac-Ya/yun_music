@@ -59,7 +59,7 @@ export default {
 #navBar {
   display: flex;
   // flex-direction: row;
-  width: 1100px;
+  width: 97%;
 }
 
 // 导航栏
