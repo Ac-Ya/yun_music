@@ -82,7 +82,7 @@ export default {
           id,
         },
       });
-      console.log(res);
+      // console.log(res);
       if( res.data.lrc){
         let lyrics = res.data.lrc.lyric;
         // 对获取到的歌词进行处理

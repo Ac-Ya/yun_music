@@ -1,6 +1,6 @@
 <template>
-  <div id="commemt" v-if="newCommentData.length !==0">
-    <div class="comment">
+  <div id="commemt">
+    <div class="comment" v-if="newCommentData.length !== 0">
       <!-- 评论输入框 -->
       <div class="commentArea">
         <el-input
@@ -59,7 +59,7 @@
         </div>
       </div>
       <!-- 加载更多 -->
-      <div v-show="moreHot" class="loadMore" @click="loadMore" >
+      <div v-show="moreHot" class="loadMore" @click="loadMore">
         更多热门评论>
       </div>
       <!-- 最新评论 -->
@@ -132,6 +132,10 @@ export default {
       type: Number,
       default: 0,
     },
+    sourceId: {
+      type: String,
+      default: "",
+    },
   },
   computed: {
     commentTime() {
@@ -161,18 +165,24 @@ export default {
       commentId: 0, //用于保存回复评论时所在楼层的id
       commentName: "", //用于保存回复评论时所在楼层的名字
       t: 1, //判断是发送评论还是回复评论
+      id: "", //资源id 但你是视频或mv时保存
     };
   },
   created() {
-    console.log(this.sourceID, this.commentType);
-    this.getHotCommentData(this.sourceID, this.commentType);
+    // console.log(this.sourceID, this.commentType);
+    if (this.commentType == 5 || this.commentType == 1) {
+      this.id = this.sourceId;
+      this.getHotCommentData(this.id, this.commentType);
+    } else {
+      this.getHotCommentData(this.sourceID, this.commentType);
+    }
   },
   methods: {
     //获取评论数据
     async getHotCommentData(id, type) {
       var timestamp = Date.parse(new Date());
-      this.hotCommentData =[]
-      this.newCommentData = []
+      this.hotCommentData = [];
+      this.newCommentData = [];
       let res = await request({
         url: "/comment/" + this.commentTypes[type],
         method: "get",
@@ -181,7 +191,7 @@ export default {
           type,
           limit: 50,
           offset: (this.currentPage - 1) * 50,
-          timestamp
+          timestamp,
         },
       });
       console.log(res);
@@ -217,7 +227,7 @@ export default {
         content = this.comment,
         commentId = this.commentId;
       // 如果t为1 表示发送评论  post需要携带cookie 不然会报错301
-      console.log(id,type);
+      console.log(id, type);
 
       //判断是否登录
       // if (!this.$store.state.isLogin) {
@@ -236,7 +246,7 @@ export default {
       this.submitComment(t, type, id, commentId, content);
       //更新评论列表
       // 清空输入框
-      this.comment = ''
+      this.comment = "";
     },
     //提交评论的请求
     async submitComment(t, type, id, commentId, content) {
@@ -253,15 +263,14 @@ export default {
           cookie: window.localStorage.getItem("cookie"),
           timestamp,
         },
-
       });
       console.log(res);
       if (res.data.code !== 200) {
         this.$message.error("获取评论失败,请稍后重试!");
-      }else{
+      } else {
         this.getHotCommentData(id, type);
       }
-      timestamp = null
+      timestamp = null;
       // console.log(res);
     },
 
@@ -293,11 +302,10 @@ export default {
 
       //回到评论框所处的位置
       let comment = document.querySelector(".comment");
-        comment.scrollTo({
-        behavior:"smooth",
+      comment.scrollTo({
+        behavior: "smooth",
         top: 0,
       });
-      
     },
   },
   watch: {
