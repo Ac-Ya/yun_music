@@ -88,7 +88,6 @@ export default {
   right: 0;
   .playlistTagItem {
     padding: 10px;
-    // height: 30px;
     margin-left: 5px;
     line-height: 10px;
     text-align: center;
