@@ -3,7 +3,6 @@
     <m-nav
       :allTag="navBarList"
       :currentTag="currentRoute"
-      :currentPRoute="'/' + 'video' + '/'"
     ></m-nav>
     <div class="show">
       <router-view></router-view>
@@ -20,11 +19,13 @@ export default {
   data() {
     return {
       navBarList: {
-        mVideo: "视频",
-        MV: "MV",
+        '/video/mVideo': "视频",
+        '/video/MV': "MV",
       },
-      currentRoute: "mVideo",
+      currentRoute: "/video/mVideo",
     };
+  },
+  created(){
   },
   methods: {
     

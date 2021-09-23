@@ -1,6 +1,5 @@
 <template>
   <div id="mVideo">
-
     <!-- 列表数据 -->
     <div
       v-if="videoList !== null"
@@ -13,8 +12,7 @@
       v-loading="loading"
       element-loading-spinner="el-icon-loading"
     >
-    <!-- 导航栏 -->
-
+      <!-- 导航栏 -->
       <nav-bar
         :tags="hotTags"
         :tag="currentTag"
@@ -42,7 +40,12 @@
           </div>
         </el-card>
       </nav-bar>
-      <div class="vide-item" v-for="item in videoList" :key="item.data.id">
+      <div
+        class="vide-item"
+        v-for="item in videoList"
+        :key="item.data.id"
+        @click="toVideoDetail(item.data.vid, 'video')"
+      >
         <img :src="item.data.coverUrl" alt="" />
         <div class="playCount">
           <i class="iconfont icon-bofang4"></i>
@@ -171,6 +174,16 @@ export default {
       this.loading = false;
     },
 
+    //跳转到视频详情页
+    toVideoDetail(id, type) {
+
+      this.$router.push({
+        path:'/videoDetail',
+        query:{
+          id,type
+        }
+      })
+    },
     //触底事件
     load() {
       // console.log(1);
