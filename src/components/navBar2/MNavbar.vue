@@ -17,10 +17,10 @@ export default {
   name: "MNavbar",
   components: {},
   props: {
-    currentTag: {
-      type: String,
-      default: "",
-    },
+    // currentTag: {
+    //   type: String,
+    //   default: "",
+    // },
     allTag: {
       type: Object,
       default: null,
@@ -31,7 +31,8 @@ export default {
     }
   },
   created(){
-    this.tag = this.currentTag
+    this.tag = this.$route.path
+    // console.log(this.$route.path);
   },
   data() {
     return {
@@ -41,8 +42,13 @@ export default {
   methods:{
       handleClick(key){
         this.tag = key
-        this.$router.push(this.currentPRoute+key)
+        this.$router.push(key)
       }
+  },
+  watch:{
+    // '$route.path'(n,v){
+    //   console.log(n);
+    // }
   }
 };
 </script>
@@ -54,7 +60,7 @@ export default {
   z-index: 999;
   background-color: white;
   margin-left: 20px;
-  padding-top: 10px;
+  padding-top: 5px;
 }
 .barItem {
   margin-right: 20px;
