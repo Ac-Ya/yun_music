@@ -30,7 +30,8 @@ export default {
   props: {},
   data() {
     return {
-      click: "discoverMusic", //用于定位当前点击的li
+      // click: "discoverMusic", //用于定位当前点击的li
+      click:'',
       operationList1: {
         discoverMusic: "发现音乐",
         video: "视频",
@@ -55,13 +56,18 @@ export default {
     };
   },
   created() {
-    },
+    // console.log(this.$route.path);
+    this.pattern(this.$route.path);
+  },
   methods: {
     to(key) {
       this.click = key;
       this.$router.push("/" + key);
     },
-
+    pattern(str) {
+      const subString = str.split("/")[1];
+      this.click = subString
+    },
   },
 
   // watch: {
