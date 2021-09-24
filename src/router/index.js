@@ -75,11 +75,17 @@ const routes = [
         children: [
           {
             path: "/video/mVideo",
-            component:MVideo
+            component: MVideo,
+            meta: {
+              keepAlive: true
+            }
           },
           {
             path: "/video/MV",
-            component:MV
+            component: MV,
+            meta: {
+              keepAlive: true
+            }
           }
         ]
       },
