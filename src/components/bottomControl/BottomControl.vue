@@ -1,58 +1,61 @@
 <template>
   <div id="bottomControl">
-    <audio
-      :src="musicUrl"
-      ref="audioPlayer"
-      @timeupdate="timeUpdate"
-      @ended="playEnd"
-      autoplay
-    ></audio>
-    <div class="coverImg">
-      <div
-        class="img"
-        @mouseenter="enter"
-        @mouseleave="leave"
-        @click="showDetail"
-      >
-        <img :src="musicDetail.al.picUrl" alt="" v-if="musicDetail" />
-        <img src="../../assets/img/tx.png" alt="" v-else />
-        <i class="iconfont icon-up" :class="{ showUp: showUp }"></i>
+      <audio
+        :src="musicUrl"
+        ref="audioPlayer"
+        @timeupdate="timeUpdate"
+        @ended="playEnd"
+        autoplay
+      ></audio>
+      <div class="coverImg">
+        <div
+          class="img"
+          @mouseenter="enter"
+          @mouseleave="leave"
+          @click="showDetail"
+        >
+          <img :src="musicDetail.al.picUrl" alt="" v-if="musicDetail" />
+          <img src="../../assets/img/tx.png" alt="" v-else />
+          <i class="iconfont icon-up" :class="{ showUp: showUp }"></i>
+        </div>
+        <div class="musicInfo" v-if="musicDetail">
+          <span class="name">{{ musicDetail.name }}</span>
+          <span class="singer">{{ musicDetail.ar[0].name }}</span>
+        </div>
       </div>
-      <div class="musicInfo" v-if="musicDetail">
-        <span class="name">{{ musicDetail.name }}</span>
-        <span class="singer">{{ musicDetail.ar[0].name }}</span>
-      </div>
-    </div>
 
-    <div class="playControl">
-      <div class="top">
-        <i class="iconfont" @click="changePlayModel" :class="showIcon"></i>
-        <!-- 上一首 -->
-        <i class="iconfont icon-shangyishou" @click="changeMusic('pre')"></i>
-        <!-- 播放暂停 -->
-        <i
-          class="iconfont"
-          :class="{ 'icon-Path': !isPlay, 'icon-zantingtingzhi': isPlay }"
-          @click="handlePlay"
-        ></i>
-        <!-- 下一首 -->
-        <i class="iconfont icon-audio-up" @click="changeMusic('next')"></i>
+      <div class="playControl">
+        <div class="top">
+          <i class="iconfont" @click="changePlayModel" :class="showIcon"></i>
+          <!-- 上一首 -->
+          <i class="iconfont icon-shangyishou" @click="changeMusic('pre')"></i>
+          <!-- 播放暂停 -->
+          <i
+            class="iconfont"
+            :class="{ 'icon-Path': !isPlay, 'icon-zantingtingzhi': isPlay }"
+            @click="handlePlay"
+          ></i>
+          <!-- 下一首 -->
+          <i class="iconfont icon-audio-up" @click="changeMusic('next')"></i>
+        </div>
+        <div class="bottom">
+          <span>{{ currentTime | handleMusicTime }}</span>
+          <el-slider
+            @change="changeProgress"
+            v-model="progressTime"
+            :show-tooltip="false"
+            class="progress"
+          ></el-slider>
+          <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
+          <span>{{
+            (musicDetail ? musicDetail.dt : 0) | handleMusicTime
+          }}</span>
+        </div>
       </div>
-      <div class="bottom">
-        <span>{{ currentTime | handleMusicTime }}</span>
-        <el-slider
-          @change="changeProgress"
-          v-model="progressTime"
-          :show-tooltip="false"
-          class="progress"
-        ></el-slider>
-        <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
-        <span>{{ (musicDetail ? musicDetail.dt : 0) | handleMusicTime }}</span>
+      <div class="musicList" @click="showDrawer = !showDrawer">
+        <i class="iconfont icon-gedan"></i>
       </div>
-    </div>
-    <div class="musicList">
-      <i class="iconfont icon-gedan"></i>
-    </div>
+      <el-drawer :visible.sync="showDrawer" :with-header="false" :modal="false"></el-drawer>    
   </div>
 </template>
 
@@ -67,7 +70,7 @@ export default {
   data() {
     return {
       progressTime: 0, //用于显示进度条已播放的长度
-      currentTime: 0, //当前音乐播放的时间
+      currentTime: "00:00", //当前音乐播放的时间
       icons: {
         0: "icon-bofangliebiao",
         1: "icon-suijibofang",
@@ -80,6 +83,7 @@ export default {
       musicDetail: null,
       totalTime: 0,
       currentIndex: -1,
+      showDrawer: false,
     };
   },
   computed: {
@@ -172,7 +176,7 @@ export default {
       // console.log(currentIcon);
       //获取当前音乐所在index,和当前音乐所在的音乐列表,当前音乐列表的长度
       let index = state.currentMusic.index;
-      console.log(index);
+      // console.log(index);
       if (index == -1) {
         return;
       }
@@ -244,7 +248,7 @@ export default {
       // console.log(res);
       if (res.data.data[0].url == null) {
         this.$message.error("该歌曲暂无版权，将为您播放下一首歌曲");
-        this.changeMusic("next")
+        this.changeMusic("next");
         return;
       }
       this.musicUrl = res.data.data[0].url;
@@ -260,11 +264,21 @@ export default {
       this.getMusicDetailData(currentMusic.musicId);
       this.getMusicUrl(currentMusic.musicId);
     },
+    //
+    "$store.state.showBottomControl"(showControl) {
+      if (!showControl) {
+        this.$refs.audioPlayer.pause();
+        this.$store.commit("currentPlayState", showControl);
+        this.isPlay = showControl;
+      }
+    },
   },
 };
 </script>
 <style lang="less" scoped>
 #bottomControl {
+  width: 100%;
+  // overflow: hidden;
   .coverImg {
     width: 200px;
     display: flex;
@@ -316,6 +330,8 @@ export default {
 }
 .playControl {
   width: 450px;
+  // flex: 1;
+  margin: auto;
   height: 100%;
 }
 
@@ -340,9 +356,13 @@ export default {
 }
 
 .musicList {
+  position: absolute;
+  // width: 100px;
+  right: 10px;
   margin-right: 30px;
   .iconfont {
     font-size: 30px;
   }
 }
+
 </style>
