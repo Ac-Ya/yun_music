@@ -13,14 +13,19 @@
       </el-aside>
       <!-- 主要内容区 -->
       <el-main>
-        <router-view></router-view>
+        <keep-alive include="Video">
+          <router-view></router-view>
+        </keep-alive>
       </el-main>
     </el-container>
     <music-detail
       class="musicDetail"
       :class="{ hide: isShowDetail }"
     ></music-detail>
-    <bottom-control class="musicControl"></bottom-control>
+    <bottom-control
+      class="musicControl"
+      v-show="isShowBottomControl"
+    ></bottom-control>
   </el-container>
 </template>
 
@@ -41,6 +46,7 @@ export default {
   data() {
     return {
       isShowDetail: false,
+      isShowBottomControl: true,
     };
   },
   created() {
@@ -50,6 +56,10 @@ export default {
   watch: {
     "$store.state.showDetail"(showDetail) {
       this.isShowDetail = showDetail;
+    },
+    //用于监听底部控制栏的显示
+    "$store.state.showBottomControl"(showControl) {
+      this.isShowBottomControl = showControl;
     },
   },
 };
@@ -87,13 +97,13 @@ export default {
 }
 .musicControl {
   position: fixed;
+  display: flex;
   justify-content: space-between;
+  left: 0;
   bottom: 0;
-  width: 100%;
   height: 70px;
   background-color: #fff;
   z-index: 9999;
-  display: flex;
   align-items: center;
   border-top: 1px solid #dcdcdc;
 }

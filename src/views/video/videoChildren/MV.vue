@@ -51,7 +51,12 @@
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(255,255,255,1)"
     >
-      <div class="mv-item" v-for="item in mvListData" :key="item.id" @click="toVideoDetail(item.id,'mv')">
+      <div
+        class="mv-item"
+        v-for="item in mvListData"
+        :key="item.id"
+        @click="toVideoDetail(item.id, 'mv')"
+      >
         <img :src="item.cover" alt="" />
         <div class="playCount">
           <i class="iconfont icon-bofang4"></i>
@@ -62,17 +67,17 @@
       </div>
     </div>
     <!-- 分页 -->
-      <div class="pages" v-if="!total < 100">
-        <el-pagination
-          background
-          :total="total"
-          layout="prev, pager, next"
-          :page-size="50"
-          :current-page="currentPage"
-          @current-change="pageChange"
-        >
-        </el-pagination>
-      </div>
+    <div class="pages" v-if="!total < 100">
+      <el-pagination
+        background
+        :total="total"
+        layout="prev, pager, next"
+        :page-size="50"
+        :current-page="currentPage"
+        @current-change="pageChange"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
@@ -143,10 +148,10 @@ export default {
           offset: (this.currentPage - 1) * 40,
         },
       });
-      console.log(res);
-      let data = res.data
+      // console.log(res);
+      let data = res.data;
       this.mvListData = data.data;
-      data.count ? this.total = data.count:this.total
+      data.count ? (this.total = data.count) : this.total;
       this.hasMore = data.hasMore;
       this.loading = false;
     },
@@ -155,23 +160,24 @@ export default {
     handleClick(tag, requestType) {
       this.requestParams[requestType] = tag;
       this.getAllData(this.requestParams);
-      this.currentPage = 1
+      this.currentPage = 1;
     },
-    pageChange(page){
-      this.currentPage = page
-      this.getAllData(this.requestParams)
+    pageChange(page) {
+      this.currentPage = page;
+      this.getAllData(this.requestParams);
     },
     //跳转到videoDetail
-    toVideoDetail(id,type){
-      console.log(id);
-      console.log(type);
+    toVideoDetail(id, type) {
+      // console.log(id);
+      // console.log(type);
       this.$router.push({
-        path:'/videoDetail',
-        query:{
-          id,type
-        }
-      })
-    }
+        path: "/videoDetail",
+        query: {
+          id,
+          type,
+        },
+      });
+    },
   },
 };
 </script>
@@ -216,7 +222,7 @@ export default {
   flex-wrap: wrap;
   min-width: 1100px;
   margin-bottom: 50px;
-   &::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
 }
@@ -261,6 +267,6 @@ export default {
 .pages {
   width: 100%;
   text-align: center;
-  margin-bottom:120px ;
+  margin-bottom: 120px;
 }
 </style>

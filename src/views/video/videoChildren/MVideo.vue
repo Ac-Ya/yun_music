@@ -1,5 +1,5 @@
 <template>
-  <div id="mVideo">
+  <div id="mVideo" @scroll="handleScroll">
     <!-- 列表数据 -->
     <div
       v-if="videoList !== null"
@@ -8,9 +8,11 @@
       infinite-scroll-distance="100"
       :infinite-scroll-disabled="disabled"
       :infinite-scroll-immediate="false"
-      infinite-scroll-delay="300"
+      infinite-scroll-delay="200"
       v-loading="loading"
       element-loading-spinner="el-icon-loading"
+
+      @scroll="handleScroll"
     >
       <!-- 导航栏 -->
       <nav-bar
@@ -49,9 +51,9 @@
         <img :src="item.data.coverUrl" alt="" />
         <div class="playCount">
           <i class="iconfont icon-bofang4"></i>
-          <span>{{ item.data.durationms | handleNum }}</span>
+          <span>{{ item.data.playTime | handleNum }}</span>
         </div>
-        <div class="time">{{ item.data.playTime | handleMusicTime }}</div>
+        <div class="time">{{  item.data.durationms | handleMusicTime }}</div>
         <div class="desc">
           {{ item.data.title ? item.data.title : item.data.name }}
         </div>
@@ -94,6 +96,8 @@ export default {
       hasMore: true, //是否有更多数据
       disabled: false, //是否无限加载
       loading: true, //是否显示正在加载
+      currentHeight:0,
+
     };
   },
   filters: {
@@ -176,24 +180,28 @@ export default {
 
     //跳转到视频详情页
     toVideoDetail(id, type) {
-
       this.$router.push({
-        path:'/videoDetail',
-        query:{
-          id,type
-        }
-      })
+        path: "/videoDetail",
+        query: {
+          id,
+          type,
+        },
+      });
     },
     //触底事件
     load() {
-      // console.log(1);
       if (this.hasMore) {
         this.getVideoListData(this.currentTagId);
       }
       this.disabled = true;
     },
+    handleScroll(e) {
+      this.currentHeight = e.target.scrollTop
+    }
   },
-  mounted() {},
+  mounted() {
+
+  },
   watch: {
     currentTagId(nId, oId) {
       this.currentPage = 1;
@@ -207,6 +215,14 @@ export default {
         this.disabled = true;
       }
     },
+  },
+  activated() {
+    let mVideo = document.querySelector(".videoList")
+    mVideo.scrollTo({
+      top:this.currentHeight
+    })
+  },
+  deactivated() { 
   },
 };
 </script>
@@ -257,6 +273,9 @@ export default {
   flex-wrap: wrap;
   margin-bottom: 100px;
   overflow-y: scroll;
+   &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .vide-item {
   position: relative;

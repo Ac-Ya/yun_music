@@ -8,7 +8,7 @@
         <span v-else>MV详情</span>
       </div>
       <!-- 视频盒子 -->
-      <video autoplay controls src="" class="videoBox"></video>
+      <video autoplay controls :src="url ? url : ''" class="videoBox"></video>
       <!-- 视频信息 -->
       <div class="videoInfo" v-if="videoDetailData !== null">
         <!-- 用户信息 -->
@@ -40,7 +40,7 @@
             >
             <span
               >播放:{{
-                ( routeData.type  == "mv"
+                (routeData.type == "mv"
                   ? videoDetailData.playCount
                   : videoDetailData.playTime) | handleNum
               }}次</span
@@ -62,7 +62,11 @@
           </div>
           <div class="operationItem">
             <i class="iconfont icon-favorite"></i>
-            <span>收藏({{ videoDetailData.subCount || videoDetailData.subscribeCount}})</span>
+            <span
+              >收藏({{
+                videoDetailData.subCount || videoDetailData.subscribeCount
+              }})</span
+            >
           </div>
           <div class="operationItem">
             <i class="iconfont icon-fenxiang"></i>
@@ -74,32 +78,39 @@
           </div>
         </div>
       </div>
-      <!--       :commentType=""
-        :sourceID="" -->
-      <div class="commentCount">评论({{videoDetailData.commentCount}})</div>
+      <div class="commentCount">评论({{ videoDetailData.commentCount }})</div>
       <comment
-       :commentType="routeData.type == 'video' ? 5:1"
-       :sourceId="routeData.id" 
+        :commentType="routeData.type == 'video' ? 5 : 1"
+        :sourceId="routeData.id"
         class="comment"
       ></comment>
     </div>
     <!--相关推荐  -->
-    <div class="related">
+    <div class="related" v-if="relatedData !== null">
       <div class="title">
         <span>相关推荐</span>
       </div>
-      <div class="recommentItem">
-        <img src="../../assets/img/tx.png" alt="" />
+      <div
+        class="recommentItem"
+        v-for="item2 in relatedData"
+        :key="item2.id"
+        @click="toVideoDetail(item2.vid || item2.id, routeData.type)"
+      >
+        <img :src="item2.coverUrl || item2.cover" alt="" />
         <div class="palyCount">
-          <i class="iconfont"></i>
-          <span>24万</span>
+          <i class="iconfont icon-bofang4"></i>
+          <span>{{  (item2.playTime || item2.duration) | handleNum }}</span>
         </div>
         <div class="time">
-          <span>02:53</span>
+          <span>{{
+            (item2.durationms || item2.playCount) | handleMusicTime
+          }}</span>
         </div>
         <div class="relatedInfo">
-          <div class="desc">笨蛋不要得寸进尺，我的气还没消下去呢</div>
-          <div class="ar">by琳琳请多指教</div>
+          <div class="desc">{{ item2.title || item2.name }}</div>
+          <div class="ar">
+            {{ item2.creator ? item2.creator[0].userName : item2.artistName }}
+          </div>
         </div>
       </div>
     </div>
@@ -108,9 +119,14 @@
 
 <script>
 let routeData = null;
+let res = null,
+  mvid = null,
+  url = null,
+  params = null,
+  vid = null;
 import { request } from "network/request.js";
 import Comment from "components/comment/Comment.vue";
-import { formatTime,handleNum } from "../../plugins/utils";
+import { formatTime, handleNum, handleMusicTime } from "../../plugins/utils";
 export default {
   name: "VideoDetail",
   components: { Comment },
@@ -123,6 +139,8 @@ export default {
       },
       videoDetailData: null, //视频详情数据
       videoInfo: null, //用于保存视频的点赞，分享，评论数
+      url: "", //用于保存视频的url
+      relatedData: [], //用于保存相关推荐数据
     };
   },
   filters: {
@@ -133,21 +151,18 @@ export default {
       // 2、将date进行格式化
       return formatTime(date);
     },
-    handleNum
+    handleNum,
+    handleMusicTime,
   },
   created() {
+    this.$store.commit("modifyShowBottomControl", false);
     routeData = this.$route.query;
     this.routeData = routeData;
-    this.getVideoData(routeData.id, routeData.type);
-    this.getVideoInfo(routeData.id, routeData.type);
+    this.getAllData(routeData.id,routeData.type)
   },
   methods: {
     //获取视频详情数据
     async getVideoData(id, type) {
-      let res = null;
-      let mvid = null;
-      let url = null;
-      let params = null;
       type == "video" ? (url = "/video/detail") : (url = "/mv/detail");
       type == "video" ? (params = { id }) : (params = { mvid: id });
       res = await request({
@@ -155,39 +170,90 @@ export default {
         method: "get",
         params,
       });
-      console.log(res);
-      // if (res.data.code !== 200) {
-      //   this.$message("获取数据失败，请刷新重试！");
-      //   return;
-      // }
+      if (res.data.code !== 200) {
+        this.$message("获取数据失败，请刷新重试！");
+        return;
+      }
       this.videoDetailData = res.data.data;
       (res = null), (mvid = null), (url = null), (params = null);
     },
     //获取视频的点赞转发评论数据
     async getVideoInfo(id, type) {
-      let res = null,
-       mvid = null,
-       url = null,
-       params = null,
-       vid = null
-      
       type == "video"
         ? (url = "/video/detail/info")
         : (url = "/mv/detail/info");
-      type == "video" ? (params = { vid:id }) : (params = { mvid: id });
+      type == "video" ? (params = { vid: id }) : (params = { mvid: id });
       res = await request({
         url,
         method: "get",
         params,
       });
-      console.log(res);
-      // if (res.data.code !== 200) {
-      //   this.$message("获取数据失败，请刷新重试！");
-      //   return;
-      // }
+      // console.log(res);
+      if (res.data.code !== 200) {
+        this.$message("获取数据失败，请刷新重试！");
+        return;
+      }
       this.videoInfo = res.data;
-      (res = null), (mvid = null), (url = null), (params = null),(vid = null);
+      (res = null), (mvid = null), (url = null), (params = null), (vid = null);
     },
+    //获取视频的url
+    async getVideoUrl(id, type) {
+      let timestamp = Date.parse(new Date());
+      type == "video" ? (url = "/video/url") : (url = "/mv/url");
+      res = await request({
+        url,
+        method: "get",
+        params: {
+          id,
+          timestamp,
+        },
+      });
+      // console.log(res);
+      if (res.data.code !== 200) {
+        this.$message("获取数据失败，请刷新重试！");
+        return;
+      }
+      type == "video"
+        ? (this.url = res.data.urls[0].url)
+        : (this.url = res.data.data.url);
+    },
+    //获取相关推荐视频
+    async getRelatedData(id, type) {
+      let timestamp = Date.parse(new Date());
+      type == "video" ? (url = "/related/allvideo") : (url = "/simi/mv");
+      type == "video" ? (params = { id }) : (params = { mvid: id });
+      res = await request({
+        url,
+        method: "get",
+        params,
+        timestamp,
+      });
+      console.log(res);
+      type == "video"
+        ? (this.relatedData = res.data.data)
+        : (this.relatedData = res.data.mvs);
+    },
+    //获取所有数据
+    getAllData(id,type) {
+      this.getVideoData(id, type);
+      this.getVideoInfo(id, type);
+      this.getVideoUrl(id, type);
+      this.getRelatedData(id, type);
+    },
+
+    toVideoDetail(id, type) {
+      console.log(id);
+      console.log(type);
+      this.getAllData(id,type)
+    },
+  },
+  beforeDestroy() {
+      this.$store.commit("modifyShowBottomControl", true);
+    (res = null),
+      (mvid = null),
+      (url = null),
+      (params = null),
+      (vid = null)
   },
 };
 </script>
@@ -200,14 +266,13 @@ export default {
 }
 .detail {
   width: 60%;
-  height: 1000px;
   margin-right: 40px;
-
   .title {
     font-weight: bold;
   }
   .videoBox {
     width: 100%;
+    height: 350px;
     margin: 10px 0;
     background-color: black;
   }
@@ -291,7 +356,7 @@ export default {
 .comment {
   width: 100%;
 }
-.commentCount{
+.commentCount {
   width: 100%;
   margin-bottom: 20px;
   font-weight: bold;
@@ -309,14 +374,14 @@ export default {
   margin-top: 10px;
   img {
     position: absolute;
-    width: 150px;
+    width: 160px;
     height: 100px;
     border-radius: 10px;
   }
   .palyCount {
     position: absolute;
-    left: 110px;
-    font-size: 14px;
+    left: 90px;
+    font-size: 12px;
     color: white;
   }
   .time {
@@ -329,7 +394,7 @@ export default {
   .relatedInfo {
     position: absolute;
     left: 150px;
-    margin-left: 10px;
+    margin-left: 20px;
     font-size: 14px;
     .desc {
       display: -weblit-box;
