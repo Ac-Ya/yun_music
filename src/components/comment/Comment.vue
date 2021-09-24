@@ -1,6 +1,6 @@
 <template>
   <div id="commemt">
-    <div class="comment" v-if="newCommentData.length !== 0">
+    <div class="comment">
       <!-- 评论输入框 -->
       <div class="commentArea">
         <el-input
@@ -20,98 +20,104 @@
           <el-button size="medium" round @click="handleComment">评论</el-button>
         </div>
       </div>
-      <!-- 热门评论 -->
-      <div class="hotComment" v-if="hotCommentData.length !== 0">
-        <div class="title">热门评论</div>
-        <div
-          class="commentListItem"
-          v-for="item in hotCommentData"
-          :key="item.id"
-        >
-          <img :src="item.user.avatarUrl" alt="" />
-          <div class="commentInfo">
-            <div class="userInfo">
-              <span class="name">{{ item.user.nickname }}:</span>
-              <span class="commentDetail">{{ item.content }}</span>
-            </div>
-            <div class="floorComment" v-if="item.parentCommentId !== 0">
-              <span class="name"
-                >@{{ item.beReplied[0].user.nickname + ":" }}</span
-              >
-              <span class="commentDetail">{{ item.beReplied[0].content }}</span>
-            </div>
-            <div class="commentDate">
-              <span class="date">{{ commentTime(item.time) }}</span>
-              <div class="commentControl">
-                <div>
-                  <i class="iconfont icon-zan"></i>{{ item.likedCount }}
+      <template v-if="hotCommentData.length !== 0">
+        <!-- 热门评论 -->
+        <div class="hotComment" >
+          <div class="title">热门评论</div>
+          <div
+            class="commentListItem"
+            v-for="item1 in hotCommentData"
+            :key="item1.id"
+          >
+            <img :src="item1.user.avatarUrl" alt="" />
+            <div class="commentInfo" >
+              <div class="userInfo">
+                <span class="name">{{ item1.user.nickname }}:</span>
+                <span class="commentDetail">{{ item1.content }}</span>
+              </div>
+              <div class="floorComment" v-if="item1.beReplied.length !== 0">
+                <span class="name"
+                  >@{{ item1.beReplied[0].user.nickname + ":" }}</span
+                >
+                <span class="commentDetail">{{
+                  item1.beReplied[0].content
+                }}</span>
+              </div>
+              <div class="commentDate">
+                <span class="date">{{ commentTime(item1.time) }}</span>
+                <div class="commentControl">
+                  <div>
+                    <i class="iconfont icon-zan"></i>{{ item1.likedCount }}
+                  </div>
+                  <i class="iconfont icon-fenxiang"></i>
+                  <!-- 点击回复时传入当前的楼层的id 和 评论的名字 -->
+                  <i
+                    class="iconfont icon-huifu"
+                    @click="handleRepled(item1.commentId, item1.user.nickname)"
+                  ></i>
                 </div>
-                <i class="iconfont icon-fenxiang"></i>
-                <!-- 点击回复时传入当前的楼层的id 和 评论的名字 -->
-                <i
-                  class="iconfont icon-huifu"
-                  @click="handleRepled(item.commentId, item.user.nickname)"
-                ></i>
               </div>
             </div>
+            <div class="line"></div>
           </div>
-          <div class="line"></div>
         </div>
-      </div>
-      <!-- 加载更多 -->
-      <div v-show="moreHot" class="loadMore" @click="loadMore">
-        更多热门评论>
-      </div>
-      <!-- 最新评论 -->
-      <div class="newComment" v-if="newCommentData.length !== 0">
-        <div class="title">最新评论</div>
-        <div
-          class="commentListItem"
-          v-for="item in newCommentData"
-          :key="item.id"
-        >
-          <img :src="item.user.avatarUrl" alt="" />
-          <div class="commentInfo">
-            <div class="userInfo">
-              <span class="name">{{ item.user.nickname }}:</span>
-              <span class="commentDetail">{{ item.content }}</span>
-            </div>
-            <div class="floorComment" v-if="item.parentCommentId !== 0">
-              <span class="name"
-                >@{{ item.beReplied[0].user.nickname + ":" }}</span
-              >
-              <span class="commentDetail">{{ item.beReplied[0].content }}</span>
-            </div>
-            <div class="commentDate">
-              <span class="date">{{ commentTime(item.time) }}</span>
-              <div class="commentControl">
-                <div>
-                  <i class="iconfont icon-zan"></i>{{ item.likedCount }}
+        <!-- 加载更多 -->
+        <div v-show="moreHot" class="loadMore" @click="loadMore">
+          更多热门评论>
+        </div>
+        <!-- 最新评论 -->
+        <div class="newComment" v-if="newCommentData.length !== 0">
+          <div class="title">最新评论</div>
+          <div
+            class="commentListItem"
+            v-for="item2 in newCommentData"
+            :key="item2.id"
+          >
+            <img :src="item2.user.avatarUrl" alt="" />
+            <div class="commentInfo">
+              <div class="userInfo">
+                <span class="name">{{ item2.user.nickname }}:</span>
+                <span class="commentDetail">{{ item2.content }}</span>
+              </div>
+              <div class="floorComment" v-if="item2.beReplied.length !== 0">
+                <span class="name"
+                  >@{{ item2.beReplied[0].user.nickname + ":" }}</span
+                >
+                <span class="commentDetail">{{
+                  item2.beReplied[0].content
+                }}</span>
+              </div>
+              <div class="commentDate">
+                <span class="date">{{ commentTime(item2.time) }}</span>
+                <div class="commentControl">
+                  <div>
+                    <i class="iconfont icon-zan"></i>{{ item2.likedCount }}
+                  </div>
+                  <i class="iconfont icon-fenxiang"></i>
+                  <i
+                    class="iconfont icon-huifu"
+                    @click="handleRepled(item2.commentId, item2.user.nickname)"
+                  ></i>
                 </div>
-                <i class="iconfont icon-fenxiang"></i>
-                <i
-                  class="iconfont icon-huifu"
-                  @click="handleRepled(item.commentId, item.user.nickname)"
-                ></i>
               </div>
             </div>
+            <div class="line"></div>
           </div>
-          <div class="line"></div>
         </div>
-      </div>
-      <!-- 分页 -->
-      <div class="pages">
-        <el-pagination
-          v-if="!(total < 100)"
-          background
-          layout="prev, pager, next"
-          :total="total"
-          :page-size="100"
-          :current-page="currentPage"
-          @current-change="pageChange"
-        >
-        </el-pagination>
-      </div>
+        <!-- 分页 -->
+        <div class="pages">
+          <el-pagination
+            v-if="!(total < 100)"
+            background
+            layout="prev, pager, next"
+            :total="total"
+            :page-size="100"
+            :current-page="currentPage"
+            @current-change="pageChange"
+          >
+          </el-pagination>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -194,7 +200,7 @@ export default {
           timestamp,
         },
       });
-      console.log(res);
+      // console.log(res);
       let data = res.data;
 
       //判断是否有热门评论
@@ -215,7 +221,11 @@ export default {
     pageChange(page) {
       this.currentPage = page;
       this.newCommentData = [];
-      this.getHotCommentData(this.sourceID, this.commentType);
+      if (this.commentType == 5 || this.commentType == 1) {
+        this.getHotCommentData(this.sourceId, this.commentType);
+      } else {
+        this.getHotCommentData(this.sourceID, this.commentType);
+      }
     },
 
     // 处理点击发送评论时的回调
@@ -227,7 +237,7 @@ export default {
         content = this.comment,
         commentId = this.commentId;
       // 如果t为1 表示发送评论  post需要携带cookie 不然会报错301
-      console.log(id, type);
+      // console.log(id, type);
 
       //判断是否登录
       // if (!this.$store.state.isLogin) {
@@ -274,14 +284,6 @@ export default {
       // console.log(res);
     },
 
-    //监听input输入框
-    // inputComment() {
-    //   //如果t为2且comment为空时
-    //   if (this.t == 2 && this.comment == "") {
-    //     this.t = 1;
-    //   }
-    //   console.log(this.t);
-    // },
     //输入框失去焦点,
     blurComment() {
       this.t = 1;
@@ -310,6 +312,9 @@ export default {
   },
   watch: {
     sourceID(nV, oV) {
+      this.getHotCommentData(nV, this.commentType);
+    },
+    sourceId(nV, oV) {
       this.getHotCommentData(nV, this.commentType);
     },
   },
