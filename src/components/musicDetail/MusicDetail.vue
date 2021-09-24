@@ -44,7 +44,7 @@
       <div class="header">
         <i class="iconfont icon-arrow_down" @click="showPlay"></i>
       </div>
-      <span class="message">对不起暂时没有播放的音乐！</span>
+      <span class="message">{{isShowDetail ?message:''  }}</span>
     </div>
   </div>
 </template>
@@ -65,6 +65,7 @@ export default {
       lyric: [], //用于保存歌词
       currentMusicId: 0, //用于保存音乐id
       musicDetail: null,
+      message:'对不起暂时没有播放的音乐！'
     };
   },
   created() {},
