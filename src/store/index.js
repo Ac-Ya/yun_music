@@ -20,7 +20,8 @@ export default new Vuex.Store({
 
     isPlay: false,//当前播放状态
     showDetail: false,
-    currentPlayTime:0,//当前播放时间
+    currentPlayTime: 0,//当前播放时间
+    showBottomControl:true //
   },
   mutations: {
     UID(state,payload) {
@@ -49,6 +50,9 @@ export default new Vuex.Store({
     },
     modifyPlayTime(state, payload) {
       state.currentPlayTime = payload
+    },
+    modifyShowBottomControl(state, payload) {
+      state.showBottomControl = payload
     }
   },
   actions: {
