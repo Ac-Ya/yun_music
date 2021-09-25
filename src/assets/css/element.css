@@ -32,17 +32,18 @@
 }
 
 .el-tabs__item {
-    font-size: 12px!important;
+    font-size: 14px!important;
 }
 
 .el-table .cell {
-    line-height: 20px !important;
-    font-size: 12px !important;
+    line-height: 30px !important;
+    font-size: 14px !important;
     transform: scale(0.88);
     color: rgb(128, 128, 128) !important;
     text-overflow: ellipsis!important;
     overflow: hidden!important;
     white-space: nowrap!important;
+    text-align: center !important;
 }
 
 .el-table .cell i:nth-child(1) {
@@ -51,13 +52,13 @@
     margin-right: 5px;
 }
 
-.el-table th>.cell {
+/* .el-table th>.cell {
     font-weight:normal !important;
     font-size: 12px !important;
     transform: scale(0.88);
     color:rgb(148, 148, 148) !important;
     margin-bottom: 5px;
-}
+} */
 
 .el-table__row td:nth-child(3) .cell {
     color:rgb(36, 36, 36) !important;
@@ -117,6 +118,7 @@ tbody .el-table th, .el-table tr {
 }
 .el-drawer.rtl{
     width: 450px !important;
+    color: black;
 }
 
 
@@ -182,14 +184,14 @@ body .el-table .el-table__row .currentRow {
   .searchPop::-webkit-scrollbar {
     display: none;
 }
-
+/* 
 .el-table__row {
     width: 100%;
 }
 
 .el-table__row td:nth-child(7){
     display:none
-}
+} */
 
 tr .is-leaf:nth-child(7) {
     display: none;
