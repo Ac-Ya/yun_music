@@ -11,7 +11,6 @@
       infinite-scroll-delay="200"
       v-loading="loading"
       element-loading-spinner="el-icon-loading"
-
       @scroll="handleScroll"
     >
       <!-- 导航栏 -->
