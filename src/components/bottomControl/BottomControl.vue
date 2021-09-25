@@ -1,61 +1,85 @@
 <template>
   <div id="bottomControl">
-      <audio
-        :src="musicUrl"
-        ref="audioPlayer"
-        @timeupdate="timeUpdate"
-        @ended="playEnd"
-        autoplay
-      ></audio>
-      <div class="coverImg">
-        <div
-          class="img"
-          @mouseenter="enter"
-          @mouseleave="leave"
-          @click="showDetail"
-        >
-          <img :src="musicDetail.al.picUrl" alt="" v-if="musicDetail" />
-          <img src="../../assets/img/tx.png" alt="" v-else />
-          <i class="iconfont icon-up" :class="{ showUp: showUp }"></i>
-        </div>
-        <div class="musicInfo" v-if="musicDetail">
-          <span class="name">{{ musicDetail.name }}</span>
-          <span class="singer">{{ musicDetail.ar[0].name }}</span>
-        </div>
+    <audio
+      :src="musicUrl"
+      ref="audioPlayer"
+      @timeupdate="timeUpdate"
+      @ended="playEnd"
+      autoplay
+    ></audio>
+    <div class="coverImg">
+      <div
+        class="img"
+        @mouseenter="enter"
+        @mouseleave="leave"
+        @click="showDetail"
+      >
+        <img :src="musicDetail.al.picUrl" alt="" v-if="musicDetail" />
+        <img src="../../assets/img/tx.png" alt="" v-else />
+        <i class="iconfont icon-up" :class="{ showUp: showUp }"></i>
       </div>
+      <div class="musicInfo" v-if="musicDetail">
+        <span class="name">{{ musicDetail.name }}</span>
+        <span class="singer">{{ musicDetail.ar[0].name }}</span>
+      </div>
+    </div>
 
-      <div class="playControl">
-        <div class="top">
-          <i class="iconfont" @click="changePlayModel" :class="showIcon"></i>
-          <!-- 上一首 -->
-          <i class="iconfont icon-shangyishou" @click="changeMusic('pre')"></i>
-          <!-- 播放暂停 -->
+    <div class="playControl">
+      <div class="top">
+        <i class="iconfont" @click="changePlayModel" :class="showIcon"></i>
+        <!-- 上一首 -->
+        <i class="iconfont icon-shangyishou" @click="changeMusic('pre')"></i>
+        <!-- 播放暂停 -->
+        <i
+          class="iconfont"
+          :class="{ 'icon-Path': !isPlay, 'icon-zantingtingzhi': isPlay }"
+          @click="handlePlay"
+        ></i>
+        <!-- 下一首 -->
+        <i class="iconfont icon-audio-up" @click="changeMusic('next')"></i>
+      </div>
+      <div class="bottom">
+        <span>{{ currentTime | handleMusicTime }}</span>
+        <el-slider
+          @change="changeProgress"
+          v-model="progressTime"
+          :show-tooltip="false"
+          class="progress"
+        ></el-slider>
+        <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
+        <span>{{ (musicDetail ? musicDetail.dt : 0) | handleMusicTime }}</span>
+      </div>
+    </div>
+    <div class="musicList" @click="showDrawer = !showDrawer">
+      <i class="iconfont icon-gedan"></i>
+    </div>
+    <el-drawer :visible.sync="showDrawer" :with-header="false">
+      <!-- 没有列表数据的时候显示 -->
+      <!-- <div class="message" v-show="true">对不起暂无数据</div> -->
+      <div class="listData" v-show="true">
+        <div class="drawerHeader">
+          当前播放:<span class="musicCount">总({{ musicList.length }})首</span>
+        </div>
+        <div
+          class="musicItem"
+          v-for="(item, index) in musicList"
+          :key="item.id"
+          :class="{
+            showBg: index % 2 == 0,
+            showColor: currentIndex == index,
+          }"
+          @dblclick="playMusic(item.id, index)"
+        >
           <i
-            class="iconfont"
-            :class="{ 'icon-Path': !isPlay, 'icon-zantingtingzhi': isPlay }"
-            @click="handlePlay"
+            class="iconfont icon-zhengzaibofang"
+            v-show="currentIndex == index"
           ></i>
-          <!-- 下一首 -->
-          <i class="iconfont icon-audio-up" @click="changeMusic('next')"></i>
-        </div>
-        <div class="bottom">
-          <span>{{ currentTime | handleMusicTime }}</span>
-          <el-slider
-            @change="changeProgress"
-            v-model="progressTime"
-            :show-tooltip="false"
-            class="progress"
-          ></el-slider>
-          <!-- :max="(musicDetail ? musicDetail.dt : 100) | maxLength" -->
-          <span>{{
-            (musicDetail ? musicDetail.dt : 0) | handleMusicTime
-          }}</span>
+          <div class="name">{{ item.name }}</div>
+          <div class="singer">{{ item.ar[0].name }}</div>
+          <div class="playTime">{{ item.dt | handleMusicTime }}</div>
         </div>
       </div>
-      <div class="musicList" @click="showDrawer = !showDrawer">
-        <i class="iconfont icon-gedan"></i>
-      </div>
-      <el-drawer :visible.sync="showDrawer" :with-header="false" :modal="false"></el-drawer>    
+    </el-drawer>
   </div>
 </template>
 
@@ -84,6 +108,7 @@ export default {
       totalTime: 0,
       currentIndex: -1,
       showDrawer: false,
+      musicList: [], //用于展示抽屉的音乐数据
     };
   },
   computed: {
@@ -168,15 +193,12 @@ export default {
     //切换音乐
     changeMusic(model) {
       let state = this.$store.state;
-      // console.log(state.currentMusic);
-      // console.log(state.musicList);
-      // console.log(state.musicListId);
+
       // 获取当前的音乐播放模式
       let currentIcon = state.musicModel;
-      // console.log(currentIcon);
+
       //获取当前音乐所在index,和当前音乐所在的音乐列表,当前音乐列表的长度
       let index = state.currentMusic.index;
-      // console.log(index);
       if (index == -1) {
         return;
       }
@@ -253,6 +275,14 @@ export default {
       }
       this.musicUrl = res.data.data[0].url;
     },
+    //双击播放
+    playMusic(musicId, index) {
+      let store = this.$store;
+      this.currentIndex = index;
+      //将当前音乐id保存在vuex中
+      store.commit("modifyMusicId", { musicId, index });
+      store.commit("currentPlayState", true);
+    },
   },
   watch: {
     //监听musicId,
@@ -264,13 +294,16 @@ export default {
       this.getMusicDetailData(currentMusic.musicId);
       this.getMusicUrl(currentMusic.musicId);
     },
-    //
     "$store.state.showBottomControl"(showControl) {
       if (!showControl) {
         this.$refs.audioPlayer.pause();
         this.$store.commit("currentPlayState", showControl);
         this.isPlay = showControl;
       }
+    },
+    "$store.state.musicList"(musicList) {
+      // console.log(musicList);
+      this.musicList = musicList;
     },
   },
 };
@@ -365,4 +398,56 @@ export default {
   }
 }
 
+.listData {
+  width: 100%;
+  .drawerHeader {
+    position: fixed;
+    width: 100%;
+    height: 40px;
+    font-size: 20px;
+    font-weight: bold;
+    box-sizing: border-box;
+    border-bottom: 1px solid #dcdcdc;
+    // margin: 10px 10px 0 10px;
+    padding: 10px 0 0 10px;
+    background-color: #fff;
+    z-index: 99;
+    .musicCount {
+      font-size: 14px;
+      color: #dcdcdc;
+    }
+  }
+}
+.musicItem {
+  position: relative;
+  top: 40px;
+  width: 100%;
+  height: 35px;
+  display: flex;
+  line-height: 35px;
+  font-size: 12px;
+  .name,
+  .singer {
+    padding-left: 30px;
+    width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &:hover {
+    background-color: #f2f2f2;
+  }
+  .iconfont {
+    position: absolute;
+    color: #ec4141;
+    margin-left: 5px;
+  }
+}
+.showBg {
+  background-color: #f9f9f9;
+}
+.showColor {
+  color: #ec4141;
+  background-color: #fbeeed;
+}
 </style>
