@@ -39,7 +39,7 @@ i,tr,.buttons div {
 
 /*:root -> 获取根元素html*/
 :root {
-    --color-text: #666;
+    /* --color-text: #666; */
     --color-high-text: #317ffb;
     --color-tint: #51d9fb;
     --color-background: #fff;
