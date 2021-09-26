@@ -30,8 +30,10 @@
     <div class="headerControl">
       <div class="login">
         <img :src="userInfo.avatarUrl" alt="" v-if="userInfo.avatarUrl" />
-        <img src="../../assets/img/tx.png" alt="" v-else/>
-        <span class="loginInfo" v-if="userInfo.nickname">{{userInfo.nickname}}</span>
+        <img src="../../assets/img/tx.png" alt="" v-else />
+        <span class="loginInfo" v-if="userInfo.nickname">{{
+          userInfo.nickname
+        }}</span>
         <span class="loginInfo" v-else>点击头像登录</span>
         <i class="iconfont icon-xiangxia" @click="loginOrInfo"></i>
       </div>
@@ -43,28 +45,30 @@
       </div>
     </div>
     <!-- 下拉扫描二维码登录 -->
-    <div class="qrLogin" v-if="showQr" :class="{isShow:show}">
+    <div class="qrLogin" v-if="showQr" :class="{ isShow: show }">
       <p class="p1">扫码登陆</p>
       <div class="qr">
-        <img src="../../assets/img/wyyqr.png" alt="" />
+        <img :src="qrImg" alt="" />
         <p class="p2">使用网易云APP扫码登陆</p>
       </div>
 
-      <div class="otherLoginMethod"><span>选择其它登录方式</span>></div>
+      <div class="otherLoginMethod" @click="login">
+        <span>选择其它登录方式</span>>
+      </div>
     </div>
     <!-- 登录后的下拉的个人信息 -->
-    <div class="userInfo" v-else :class="{isShow:show}">
+    <div class="userInfo" v-else :class="{ isShow: show }">
       <div class="info">
         <div class="infoItem">
-          <span class="s1">{{userInfo.eventCount}}</span>
+          <span class="s1">{{ userInfo.eventCount }}</span>
           <span class="s2">动态</span>
         </div>
         <div class="infoItem">
-          <span class="s1">{{userInfo.follows}}</span>
+          <span class="s1">{{ userInfo.follows }}</span>
           <span class="s2">关注</span>
         </div>
         <div class="infoItem">
-          <span class="s1">{{userInfo.followeds}}</span>
+          <span class="s1">{{ userInfo.followeds }}</span>
           <span class="s2">粉丝</span>
         </div>
       </div>
@@ -103,7 +107,7 @@
         </ul>
         <div class="line"></div>
         <ul class="infoUl">
-          <li class="listItem">
+          <li class="listItem" @click="logOut">
             <i class="iconfont icon-tuichudenglu"></i>
             <span>退出登录</span>
           </li>
@@ -122,15 +126,17 @@ export default {
   props: {},
   data() {
     return {
-      showQr: false,//判断是否显示二维码框
-      show:false, //判断是否显示元素
+      showQr: false, //判断是否显示二维码框
+      show: false, //判断是否显示元素
       userInfo: {
-        nickname:"",
-        avatarUrl:"",
-        eventCount:0, //用户动态数
-        follows:0,//用户关注
-        followeds:0 //用户粉丝
+        nickname: "",
+        avatarUrl: "",
+        eventCount: 0, //用户动态数
+        follows: 0, //用户关注
+        followeds: 0, //用户粉丝
       }, //用于保存用户的登录信息
+      unikey: "", //二维码的key
+      qrImg: "", //用于保存二维码
     };
   },
   created() {
@@ -145,7 +151,7 @@ export default {
       // 判断uid是否为0，如果为0则表示没有登录
       if (!uid) {
         this.$message("请先登录！");
-        return 
+        return;
       }
 
       let res = await request({
@@ -155,24 +161,83 @@ export default {
           uid,
         },
       });
-      // console.log(res);  
+      // console.log(res);
       this.userInfo = res.data.profile;
     },
 
     //点击下拉
-    loginOrInfo(){
+    loginOrInfo() {
       // 判断是否登录
       uid = window.localStorage.getItem("uid");
       // 已经登陆
-      if(uid){
-        this.show = !this.show
+      if (uid) {
+        this.show = !this.show;
       }
-      if(!uid){
-        this.showQr = true
-        this.show = !this.show
+      if (!uid) {
+        this.showQr = true;
+        this.show = !this.show;
+        // this.qrlogin();
       }
+    },
+    //退出登录
+    logOut() {
+      window.localStorage.removeItem("uid");
+      window.localStorage.removeItem("cookie");
+      this.$store.commit("updataLoginState", false);
+      this.$router.push("/login");
+    },
+    //跳转到登录页
+    login() {
+      this.$router.push("/login");
+    },
 
-    }
+    //检查登录
+    // async checkStatus(key) {
+    //   let res = await request({
+    //     url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
+    //     withCredentials: true,
+    //   });
+    //   return res.data;
+    // },
+    // async getLoginStatus() {
+    //   const res = await request({
+    //     url: `/login/status?timerstamp=${Date.now()}`,
+    //     withCredentials: true, //关键
+    //   });
+    //   console.log(res);
+    // },
+    // async qrlogin() {
+    //   let timer;
+    //   let timestamp = Date.now();
+    //   this.getLoginStatus();
+    //   //获取二维码key
+    //   const res = await request({
+    //     url: `/login/qr/key?timerstamp=${Date.now()}`,
+    //     withCredentials: true, //关键
+    //   });
+    //   const key = res.data.data.unikey;
+    //   //获取二维码图片
+    //   const res2 = await request({
+    //     url: `/login/qr/create?key=${key}&qrimg=true&timerstamp=${Date.now()}`,
+    //     withCredentials: true, //关键
+    //   });
+    //   this.qrImg = res2.data.data.qrimg;
+
+    //   timer = setInterval(async () => {
+    //     const statusRes = await this.checkStatus(key);
+    //     if (statusRes.code === 800) {
+    //       this.$message.error("二维码已过期,请重新获取");
+    //       clearInterval(timer);
+    //     }
+    //     if (statusRes.code === 803) {
+    //       // 这一步会返回cookie
+    //       console.log(statusRes);
+    //       clearInterval(timer);
+    //       this.$message.success("授权登录成功");
+    //       await this.getLoginStatus();
+    //     }
+    //   }, 3000);
+    // },
   },
 };
 </script>
@@ -350,10 +415,10 @@ export default {
   }
   .otherLoginMethod {
     font-size: 12px;
-    margin-top: 20px
+    margin-top: 20px;
+    cursor: pointer;
   }
 }
-
 
 // 登录后的个人信息样式框
 .userInfo {
@@ -368,6 +433,7 @@ export default {
       display: flex;
       flex-direction: column;
       margin-top: 20px;
+      cursor: pointer;
       .s1 {
         font-size: 18px;
         font-weight: bold;
@@ -400,6 +466,7 @@ export default {
     .listItem {
       height: 43px;
       line-height: 43px;
+      cursor: pointer;
     }
   }
 }
@@ -421,7 +488,7 @@ export default {
   }
 }
 
-.isShow{
-  display:block ;
+.isShow {
+  display: block;
 }
 </style>

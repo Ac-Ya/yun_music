@@ -37,7 +37,9 @@ export default {
   props: {
     mData: {
       type: Array,
-      default: [],
+      default:()=>{
+        return []
+      },
     },
     musicListId:{
       type:Number,
@@ -56,8 +58,12 @@ export default {
       currentIndex: -1,
     };
   },
+  created(){
+    // console.log(this.mData);
+  },
   methods: {
     playMusic(musicId, index) {
+      console.log(this.mData);
       let store =  this.$store
       this.currentIndex = index;
       //将当前音乐id保存在vuex中
@@ -121,6 +127,10 @@ export default {
 }
 .bgC {
   background-color: #f9f9f9;
+}
+.nocopyright{
+  background-color:rgb(240,241,242);
+  color:#dadada;
 }
 
 .isChoose {

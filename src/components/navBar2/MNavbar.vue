@@ -17,10 +17,6 @@ export default {
   name: "MNavbar",
   components: {},
   props: {
-    // currentTag: {
-    //   type: String,
-    //   default: "",
-    // },
     allTag: {
       type: Object,
       default: null,
@@ -57,8 +53,8 @@ export default {
   width: 100%;
   display: flex;
   position: fixed;
-  z-index: 999;
-  background-color: white;
+  z-index: 99;
+  background-color:#fff;
   margin-left: 20px;
   padding-top: 5px;
 }

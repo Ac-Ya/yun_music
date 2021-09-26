@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { request } from "network/request.js";
 export default {
   name: "AsideNav",
   components: {},
@@ -38,6 +39,7 @@ export default {
         radio: "电台",
         dynamic: "动态",
         PrivateFM: "私人FM",
+       
       },
       operationList2: {
         recentPlay: "最近播放",
@@ -61,6 +63,11 @@ export default {
   },
   methods: {
     to(key) {
+      
+      if(!this.$store.state.isLogin && key !== 'discoverMusic'){
+        this.$message.error("对不起,您暂未登录！")
+        return
+      }
       this.click = key;
       this.$router.push("/" + key);
     },
@@ -68,6 +75,7 @@ export default {
       const subString = str.split("/")[1];
       this.click = subString
     },
+
   },
 
   // watch: {

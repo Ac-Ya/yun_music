@@ -66,7 +66,6 @@ export default {
 .playlistNav {
   width: 100%;
   height: 30px;
-  // border: 1px solid yellow;
   margin: 20px 0;
   position: relative;
   display: flex;

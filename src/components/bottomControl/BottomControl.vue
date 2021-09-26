@@ -269,8 +269,8 @@ export default {
       });
       // console.log(res);
       if (res.data.data[0].url == null) {
-        this.$message.error("该歌曲暂无版权，将为您播放下一首歌曲");
-        this.changeMusic("next");
+        this.$message.error("该歌曲暂无版权。");
+        // this.changeMusic("next");
         return;
       }
       this.musicUrl = res.data.data[0].url;
@@ -288,6 +288,8 @@ export default {
     //监听musicId,
     "$store.state.currentMusic"(currentMusic) {
       // console.log(currentMusic);
+      //清空当前音乐
+      this.musicUrl = ''
       this.musicId = currentMusic.musicId;
       this.value1 = 0;
       this.currentIndex = currentMusic.index;
