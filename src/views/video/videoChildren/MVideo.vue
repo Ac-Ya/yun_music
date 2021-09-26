@@ -65,6 +65,7 @@
         </div>
       </div>
     </div>
+    <back-top scrollObj=".videoList"></back-top>
   </div>
 </template>
 
@@ -74,6 +75,7 @@ import { request } from "network/request.js";
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
 import { handleNum, handleMusicTime } from "../../../plugins/utils";
+import BackTop from "components/backTop/BackTop";
 
 export default {
   name: "MVideo",
@@ -81,6 +83,7 @@ export default {
     NavBar,
     CardList,
     CardListItem,
+    BackTop
   },
   props: {},
   data() {
@@ -235,7 +238,7 @@ export default {
   width: 650px;
   height: 400px;
   position: absolute;
-  z-index: 99;
+  z-index: 9;
   left: 0;
   top: 35px;
   overflow: scroll;

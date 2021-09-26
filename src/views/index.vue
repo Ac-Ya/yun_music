@@ -34,6 +34,7 @@ import HeaderBar from "components/headerBar/HeaderBar";
 import AsideNav from "components/asideNav/AsideNav";
 import MusicDetail from "components/musicDetail/MusicDetail";
 import BottomControl from "components/bottomControl/BottomControl.vue";
+
 export default {
   name: "Index",
   components: {

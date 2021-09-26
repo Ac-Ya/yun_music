@@ -53,19 +53,26 @@
         </div>
       </div>
       <!-- 歌手item -->
-      <div class="singerItem" v-for="item4 in artists" :key="item4.id" @click="toSingerDetail(item4.id)">
+      <div
+        class="singerItem"
+        v-for="item4 in artists"
+        :key="item4.id"
+        @click="toSingerDetail(item4.id)"
+      >
         <img :src="item4.img1v1Url + '?param=400y400'" alt="" />
         <span class="singerName">{{ item4.name }}</span>
       </div>
+      <back-top scrollObj=".singerList"></back-top>
     </div>
   </div>
 </template>
 
 <script>
 import { request } from "network/request.js";
+import BackTop from "components/backTop/BackTop";
 export default {
-  val: "Singer",
-  components: {},
+  name: "Singer",
+  components: { BackTop },
   props: {},
   data() {
     return {
@@ -180,13 +187,13 @@ export default {
       (area = null), (type = null), (initial = null);
     },
     //跳转到歌手详情页
-    toSingerDetail(id){
-      console.log(id);
+    toSingerDetail(id) {
+      // console.log(id);
       this.$router.push({
-        path:'/singerDetail',
-        query:{id}
-      })
-    }
+        path: "/singerDetail",
+        query: { id },
+      });
+    },
   },
   watch: {
     requestParams(n, o) {

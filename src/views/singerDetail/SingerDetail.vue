@@ -1,11 +1,11 @@
 <template>
   <div id="singerDetail">
     <!-- 头部歌手信息 -->
-    <div class="singerInfo">
-      <img src="../../assets/img/tx.png" alt="" />
+    <div class="singerInfo" v-if="singerInfo !== null">
+      <img :src="singerInfo.artist.cover" alt="" />
       <div class="info">
-        <div class="name">薛之谦</div>
-        <div class="alias">Joker Xue</div>
+        <div class="name">{{ singerInfo.artist.name }}</div>
+        <div class="alias">{{ singerInfo.artist.name }}</div>
         <div class="operation">
           <div class="collect">
             <i class="iconfont icon-icon-test"></i>
@@ -17,9 +17,9 @@
           </div>
         </div>
         <div class="count">
-          <span>单曲数:223</span>
-          <span>专辑数:18</span>
-          <span>mv数:92</span>
+          <span>单曲数:{{ singerInfo.artist.musicSize }}</span>
+          <span>专辑数:{{ singerInfo.artist.albumSize }}</span>
+          <span>mv数:{{ singerInfo.artist.mvSize }}</span>
         </div>
       </div>
     </div>
@@ -30,10 +30,13 @@
       <div id="3" :class="{ isClick: currentTag === '3' }">歌手详情</div>
     </div>
     <!-- 专辑区域 -->
-    <div class="album">
+    <div
+      class="album"
+      v-if="(hotMusic !== null || albumsDetail !== null) && currentTag === '1'"
+    >
       <!-- 热门50首 -->
       <div class="hot">
-        <img src="../../assets/img/tx.png" alt="" />
+        <img src="../../assets/img/Hot.png" alt="" />
         <div class="musicList">
           <div class="title">热门50首</div>
           <music-table-item :mData="hotMusic" :musicListId="singerId">
@@ -43,17 +46,37 @@
         </div>
       </div>
       <!-- 其他专辑 -->
-      <div class="otherAlbum">
-        <img src="../../assets/img/tx.png" alt="" />
-        <div class="publishedTime">2020-9-9</div>
+      <div class="otherAlbum" v-for="(item, index) in albums" :key="item.id">
+        <img
+          @click="toMusicListDetail(albumsId[index])"
+          :src="item.picUrl"
+          alt=""
+        />
+        <div class="publishedTime">{{ item.publishTime | formatTime }}</div>
         <div class="musicList">
-          <div class="title">天外来物</div>
-          <music-table-item :mData="hotMusic" :musicListId="singerId">
+          <div class="title">{{ item.name }}</div>
+          <music-table-item
+            :mData="albumsDetail[index]"
+            :musicListId="singerId"
+          >
             <i class="iconfont icon-xindong" slot="like"></i>
             <i class="iconfont icon-xiazai" slot="download"></i>
           </music-table-item>
         </div>
-        <div class="more">查看更多(12首)</div>
+        <div class="more">查看更多({{ item.size }})首</div>
+      </div>
+    </div>
+    <!-- mv区域 -->
+
+    <!-- 歌手描述区域 -->
+    <div class="singerDesc" v-if="currentTag === '3'">
+      <div class="desc">
+        <div class="title">歌手简介</div>
+        <p class="content">{{singerDesc.briefDesc}}</p>
+      </div>
+      <div class="desc" v-for="item2 in singerDesc.introduction" :key="item2.ti">
+        <div class="title">{{item2.ti}}</div>
+        <p class="content">{{item2.txt}}</p>
       </div>
     </div>
   </div>
@@ -63,6 +86,7 @@
 import MusicTable from "components/musicTable/MusicTable.vue";
 import MusicTableItem from "components/musicTable/MusicTableItem.vue";
 import { request } from "network/request.js";
+import { formatTime } from "plugins/utils.js";
 export default {
   name: "SingerDetail",
   components: { MusicTable, MusicTableItem },
@@ -72,14 +96,26 @@ export default {
       currentTag: "1",
       hotMusic: [], //热门歌曲50首
       singerId: 0,
-      singerInfo:null,//歌手信息
+      singerInfo: null, //歌手信息
+      albumPage: 1,
+      albums: [], // 用于保存歌手的专辑
+      albumsDetail: [], //用于保存专辑详情
+      albumsId: [],
+      singerDesc:null,
     };
   },
+  filters: {
+    formatTime(date) {
+      return formatTime(new Date(date), false);
+    },
+  },
   created() {
-    let singerId = +this.$route.query.id
-    this.singerId = singerId
+    let singerId = +this.$route.query.id;
+    this.singerId = singerId;
     this.getHotMusic(singerId);
-    this.getSingerInfo(singerId)
+    this.getSingerInfo(singerId);
+    this.getSingerAlbum(singerId);
+    this.getSingerDesc(singerId)
   },
   methods: {
     //切换标签
@@ -97,7 +133,6 @@ export default {
           id,
         },
       });
-    //   console.log(res);
       if (res.data.code !== 200) {
         this.$message.error("数据请求失败，请稍后再试！");
         return;
@@ -105,16 +140,74 @@ export default {
       this.hotMusic = res.data.songs;
     },
     //获取歌手详情信息
-    async getSingerInfo(id){
-        let res = await request({
-            url:'/artist/detail',
-            method:'get',
-            params:{
-                id
-            }
-        })
-        console.log(res);
-    }
+    async getSingerInfo(id) {
+      let res = await request({
+        url: "/artist/detail",
+        method: "get",
+        params: {
+          id,
+        },
+      });
+      if (res.data.code !== 200) {
+        this.$message.error("数据获取失败，请稍后重试！");
+      }
+      this.singerInfo = res.data.data;
+    },
+    //获取歌手专辑信息
+    async getSingerAlbum(id) {
+      let res = await request({
+        url: "/artist/album",
+        method: "get",
+        params: {
+          id,
+          limit: 30,
+          offset: (this.albumPage - 1) * 30,
+        },
+      });
+      let data = res.data;
+      data.code !== 200 ? "" : (this.albums = data.hotAlbums);
+
+      await data.hotAlbums.forEach((item) => {
+        this.getAlbumDetail(item.id);
+      });
+    },
+    //获取专辑详情
+    async getAlbumDetail(id) {
+      let res = await request({
+        url: "/album",
+        method: "get",
+        params: {
+          id,
+        },
+      });
+      if (res.data.code !== 200) {
+        return;
+      }
+      this.albumsId.push(res.data.album.id);
+      this.albumsDetail.push(res.data.songs);
+    },
+    //获取歌手详情描述
+    async getSingerDesc(id) {
+      let res = await request({
+        url: "/artist/desc",
+        method: "get",
+        params: {
+          id,
+        },
+      });
+      this.singerDesc = res.data
+    },
+
+    //跳转到专辑详情页
+    toMusicListDetail(id) {
+      console.log(id);
+      // this.$router.push({
+      //   path:"/musicListDetail",
+      //   query:{
+      //     id
+      //   }
+      // })
+    },
   },
 };
 </script>
@@ -185,7 +278,8 @@ export default {
   width: 100%;
   margin-bottom: 100px;
 }
-.hot,.otherAlbum{
+.hot,
+.otherAlbum {
   width: 100%;
   display: flex;
   position: relative;
@@ -202,31 +296,49 @@ export default {
     // height: 385px;
     max-height: 385px;
     // overflow: hidden;
-    overflow-y:scroll;
+    overflow-y: scroll;
     .title {
       width: 100%;
       height: 35px;
-      line-height: 35px;
+      // line-height: 35px;
       font-weight: bold;
       font-size: 18px;
     }
   }
 }
-.otherAlbum{
-  //发表时间   
+.otherAlbum {
+  //发表时间
   height: 210px;
-  .publishedTime{
-      position: absolute;
-      top:160px ;
-      left: 10px;
-      font-size: 14px;
+  .publishedTime {
+    position: absolute;
+    top: 160px;
+    left: 10px;
+    font-size: 14px;
   }
-  .more{
-      position: absolute;
-      bottom: -30px;
-      right: 10px;
-      font-size: 14px;
-      font-weight: bold;
+  .more {
+    position: absolute;
+    bottom: -30px;
+    right: 10px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+}
+
+//描述
+.singerDesc {
+  width: 100%;
+  margin-bottom: 100px;
+}
+.desc {
+  width: 100%;
+  margin-bottom: 20px;
+  .title {
+    font-weight: bold;
+  }
+  .content {
+    text-indent: 2rem;
+    line-height: 2rem;
+    font-size: 14px;
   }
 }
 </style>

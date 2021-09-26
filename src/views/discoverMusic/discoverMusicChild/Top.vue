@@ -94,7 +94,7 @@ export default {
         method: "get",
       });
       let data = res.data.list.slice(0, 4);
-      console.log(data);
+      // console.log(data);
       this.officalListData = data;
       data.slice(0, 4).forEach((item, index) => {
         this.getOfficalListDetail(item.id);
