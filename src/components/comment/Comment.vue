@@ -22,7 +22,7 @@
       </div>
       <template v-if="hotCommentData.length !== 0">
         <!-- 热门评论 -->
-        <div class="hotComment" >
+        <div class="hotComment">
           <div class="title">热门评论</div>
           <div
             class="commentListItem"
@@ -30,7 +30,7 @@
             :key="item1.id"
           >
             <img :src="item1.user.avatarUrl" alt="" />
-            <div class="commentInfo" >
+            <div class="commentInfo">
               <div class="userInfo">
                 <span class="name">{{ item1.user.nickname }}:</span>
                 <span class="commentDetail">{{ item1.content }}</span>
@@ -65,8 +65,10 @@
         <div v-show="moreHot" class="loadMore" @click="loadMore">
           更多热门评论>
         </div>
+      </template>
+      <template v-if="newCommentData.length !== 0">
         <!-- 最新评论 -->
-        <div class="newComment" v-if="newCommentData.length !== 0">
+        <div class="newComment">
           <div class="title">最新评论</div>
           <div
             class="commentListItem"
@@ -240,10 +242,11 @@ export default {
       // console.log(id, type);
 
       //判断是否登录
-      // if (!this.$store.state.isLogin) {
-      //   this.$message.warning("只有登陆后才能评论哦!");
-      //   return;
-      // }
+      if (!this.$store.state.isLogin) {
+        this.$message.warning("只有登陆后才能评论哦!");
+        this.comment = "";
+        return;
+      }
       //判断发送内容是否为空
       if (content == "") {
         this.$message({
@@ -276,7 +279,7 @@ export default {
       });
       console.log(res);
       if (res.data.code !== 200) {
-        this.$message.error("获取评论失败,请稍后重试!");
+        this.$message.error("评论失败,请稍后重试!");
       } else {
         this.getHotCommentData(id, type);
       }
