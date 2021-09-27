@@ -33,7 +33,7 @@ import {
     Tooltip,
     Loading,
     Card,
-
+    MessageBox,
 } from 'element-ui'
 Vue.use(Table)
 Vue.use(Card)
@@ -52,11 +52,9 @@ Vue.use(CarouselItem)
 Vue.use(Pagination)
 Vue.use(Tabs)
 Vue.use(TabPane)
-
 Vue.use(TableColumn)
 Vue.use(Slider)
 Vue.use(Input)
-Vue.use(Popover)
 Vue.use(Button)
 Vue.use(Form)
 Vue.use(FormItem)
@@ -67,5 +65,7 @@ Vue.use(Link)
 Vue.use(Tooltip)
 Vue.use(Loading)
 
+
 Vue.prototype.$message = Message
+Vue.prototype.$confirm = MessageBox
 
