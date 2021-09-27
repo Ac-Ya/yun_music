@@ -213,7 +213,7 @@ tr .is-leaf:nth-child(7) {
     background-color: #fff !important;
 }
 
-.el-dialog__body {
+/* .el-dialog__body {
     padding: 0 20px 40px !important;
 }
 
@@ -223,7 +223,7 @@ tr .is-leaf:nth-child(7) {
 
 .el-dialog__close:hover {
     color: #ea4848 !important;
-}
+} */
 
 .el-tooltip__popper{
     z-index: 20000 !important;
