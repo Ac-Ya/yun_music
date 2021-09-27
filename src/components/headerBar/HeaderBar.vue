@@ -16,10 +16,11 @@
         <i class="iconfont icon-xiayiye"></i>
       </div>
       <!-- 搜索框 -->
-      <div class="search">
+      <!-- <div class="search">
         <i class="iconfont icon-sousuo"></i>
         <input type="text" placeholder="搜索" />
-      </div>
+      </div> -->
+      <search></search>
       <!-- 听歌识曲 -->
       <div class="soundHound">
         <i class="iconfont icon-tinggeshiqu"></i>
@@ -119,10 +120,11 @@
 
 <script>
 import { request } from "network/request.js";
+import Search from "components/search/Search.vue"
 let uid = 0;
 export default {
   name: "HeaderBar",
-  components: {},
+  components: {Search},
   props: {},
   data() {
     return {
@@ -135,7 +137,6 @@ export default {
         follows: 0, //用户关注
         followeds: 0, //用户粉丝
       }, //用于保存用户的登录信息
-      unikey: "", //二维码的key
       qrImg: "", //用于保存二维码
     };
   },
@@ -153,7 +154,6 @@ export default {
         this.$message("请先登录！");
         return;
       }
-
       let res = await request({
         url: "/user/detail",
         method: "get",
@@ -161,7 +161,6 @@ export default {
           uid,
         },
       });
-      // console.log(res);
       this.userInfo = res.data.profile;
     },
 
@@ -172,11 +171,13 @@ export default {
       // 已经登陆
       if (uid) {
         this.show = !this.show;
+        this.showQr = false
       }
       if (!uid) {
+        console.log(1);
         this.showQr = true;
         this.show = !this.show;
-        // this.qrlogin();
+        this.qrlogin();
       }
     },
     //退出登录
@@ -186,58 +187,74 @@ export default {
       this.$store.commit("updataLoginState", false);
       this.$router.push("/login");
     },
-    //跳转到登录页
+    //点击其他登录方式跳转到登录页
     login() {
       this.$router.push("/login");
     },
 
-    //检查登录
-    // async checkStatus(key) {
-    //   let res = await request({
-    //     url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
-    //     withCredentials: true,
-    //   });
-    //   return res.data;
-    // },
-    // async getLoginStatus() {
-    //   const res = await request({
-    //     url: `/login/status?timerstamp=${Date.now()}`,
-    //     withCredentials: true, //关键
-    //   });
-    //   console.log(res);
-    // },
-    // async qrlogin() {
-    //   let timer;
-    //   let timestamp = Date.now();
-    //   this.getLoginStatus();
-    //   //获取二维码key
-    //   const res = await request({
-    //     url: `/login/qr/key?timerstamp=${Date.now()}`,
-    //     withCredentials: true, //关键
-    //   });
-    //   const key = res.data.data.unikey;
-    //   //获取二维码图片
-    //   const res2 = await request({
-    //     url: `/login/qr/create?key=${key}&qrimg=true&timerstamp=${Date.now()}`,
-    //     withCredentials: true, //关键
-    //   });
-    //   this.qrImg = res2.data.data.qrimg;
+    //检查二维码扫码状态
+    async checkStatus(key) {
+      let res = await request({
+        url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
+        withCredentials: true,
+      });
+      return res.data;
+    },
+    //获取登录状态
+    async getLoginStatus() {
+      const res = await request({
+        url: `/login/status?timerstamp=${Date.now()}`,
+        params: {
+          cookie: window.localStorage.getItem("cookie"),
+        },
+        withCredentials: true, //关键
+      });
+      console.log(res);
+      if (res.data.data.profile !== null) {
+        //获取的数据不完整
+        // this.userInfo = res.data.data.profile;
+        window.localStorage.setItem("uid", res.data.data.account.id);
+        await this.getUserInfo()
+        this.$store.commit("updataLoginState",true)
+      }
+      this.show = false
+    },
+    //二维码登录
+    async qrlogin() {
+      let timer;
+      let timestamp = Date.now();
+      //获取二维码key
+      const res = await request({
+        url: `/login/qr/key?timerstamp=${Date.now()}`,
+        withCredentials: true, //关键
+      });
+      const key = res.data.data.unikey;
+      //获取二维码图片
+      const res2 = await request({
+        url: `/login/qr/create?key=${key}&qrimg=true&timerstamp=${Date.now()}`,
+        withCredentials: true, //关键
+      });
+      this.qrImg = res2.data.data.qrimg;
 
-    //   timer = setInterval(async () => {
-    //     const statusRes = await this.checkStatus(key);
-    //     if (statusRes.code === 800) {
-    //       this.$message.error("二维码已过期,请重新获取");
-    //       clearInterval(timer);
-    //     }
-    //     if (statusRes.code === 803) {
-    //       // 这一步会返回cookie
-    //       console.log(statusRes);
-    //       clearInterval(timer);
-    //       this.$message.success("授权登录成功");
-    //       await this.getLoginStatus();
-    //     }
-    //   }, 3000);
-    // },
+
+      //轮询检查二维码扫描情况
+      timer = setInterval(async () => {
+        const statusRes = await this.checkStatus(key);
+        if (statusRes.code === 800) {
+          this.$message.error("二维码已过期,请重新获取");
+          clearInterval(timer);
+        }
+        if (statusRes.code === 803) {
+          // 这一步会返回cookie
+          console.log(statusRes);
+          // 保存cookie
+          window.localStorage.setItem("cookie", statusRes.cookie);
+          clearInterval(timer);
+          this.$message.success("授权登录成功");
+          await this.getLoginStatus();
+        }
+      }, 3000);
+    },
   },
 };
 </script>
@@ -283,54 +300,54 @@ export default {
 }
 
 /* 中部搜索框样式 */
-.center .search {
-  width: 160px;
-  height: 30px;
-  /* border: 1px solid yellowgreen; */
-  margin: auto 10px;
-  border-radius: 20px;
-  line-height: 30px;
-  padding-left: 10px;
-  background-color: rgba(88, 29, 29, 0.1);
-}
-.search i {
-  color: @color;
-}
-.search input {
-  width: 120px;
-  margin-left: 5px;
-  color: @color;
-  border: none;
-  /* 背景透明 */
-  background-color: transparent;
-}
-/*兼容浏览器 */
-.search input::-webkit-input-placeholder {
-  color: rgba(211, 211, 211, 0.5);
-  font-size: 12px;
-}
-/* Mozilla Firefox 4 to 18 */
-.search input:-moz-placeholder {
-  color: rgba(211, 211, 211, 0.5);
-  opacity: 1;
-  font-size: 12px;
-}
-/* Mozilla Firefox 19+ */
-.search input::-moz-placeholder {
-  color: rgba(211, 211, 211, 0.5);
-  opacity: 1;
-  font-size: 12px;
-}
-/* Internet Explorer 10+ */
-.search input:-ms-input-placeholder {
-  color: rgba(211, 211, 211, 0.5);
-  font-size: 12px;
-}
+// .center .search {
+//   width: 160px;
+//   height: 30px;
+//   /* border: 1px solid yellowgreen; */
+//   margin: auto 10px;
+//   border-radius: 20px;
+//   line-height: 30px;
+//   padding-left: 10px;
+//   background-color: rgba(88, 29, 29, 0.1);
+// }
+// .search i {
+//   color: @color;
+// }
+// .search input {
+//   width: 120px;
+//   margin-left: 5px;
+//   color: @color;
+//   border: none;
+//   /* 背景透明 */
+//   background-color: transparent;
+// }
+// /*兼容浏览器 */
+// .search input::-webkit-input-placeholder {
+//   color: rgba(211, 211, 211, 0.5);
+//   font-size: 12px;
+// }
+// /* Mozilla Firefox 4 to 18 */
+// .search input:-moz-placeholder {
+//   color: rgba(211, 211, 211, 0.5);
+//   opacity: 1;
+//   font-size: 12px;
+// }
+// /* Mozilla Firefox 19+ */
+// .search input::-moz-placeholder {
+//   color: rgba(211, 211, 211, 0.5);
+//   opacity: 1;
+//   font-size: 12px;
+// }
+// /* Internet Explorer 10+ */
+// .search input:-ms-input-placeholder {
+//   color: rgba(211, 211, 211, 0.5);
+//   font-size: 12px;
+// }
 
-/* 选中时没有边框 */
-.search input:focus {
-  outline: none;
-}
+// /* 选中时没有边框 */
+// .search input:focus {
+//   outline: none;
+// }
 
 /* 听歌识曲区域*/
 .soundHound {
