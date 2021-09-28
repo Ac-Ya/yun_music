@@ -22,12 +22,14 @@
           @mouseenter="enter(-2)"
           @mouseleave="leave()"
           class="recommendMusic listItem"
+          @click="toRecommendMusic"
         >
-          <img src="../../../assets/img/tx.png" alt="" />
-          <div class="playIcon" :class="{ show: showIcon == -2 }">
-            <i class="iconfont icon-bofang"></i>
+          <img src="../../../assets/img/tx.png" alt="" class="dayEvery" />
+          <span class="recommendTitle">每日歌曲推荐</span>
+          <div class="rili">
+            <i class="iconfont icon-rili"></i>
+            <span>{{ currentDate }}</span>
           </div>
-          <span class="playlistTitle">每日歌曲推荐</span>
         </div>
         <!-- 每一个音乐卡片 -->
         <div
@@ -74,19 +76,24 @@
     </div>
     <!-- 推荐MV -->
     <div class="recommendMV">
-      <div class="title">
+      <div class="title" @click="tomMv">
         <span>推荐MV</span>
         <i class="iconfont icon-xiayiye"></i>
       </div>
       <card-list class="recommendMVList">
-        <card-list-item class="recommendMVItem" v-for="(item) in recommendMV" :key="item.id">
+        <card-list-item
+          class="recommendMVItem"
+          v-for="item in recommendMV"
+          :key="item.id"
+          @click.native="toVideoDetail(item.id, 'mv')"
+        >
           <img :src="item.picUrl" alt="" slot="item-img" />
           <div slot="item-playCount" class="count">
             <i class="iconfont icon-bofang"></i>
-            <span>{{playcount(item.playCount)}}</span>
+            <span>{{ playcount(item.playCount) }}</span>
           </div>
           <span slot="item-title" class="recommendMVTitle">
-           {{item.name}}
+            {{ item.name }}
           </span>
         </card-list-item>
       </card-list>
@@ -98,7 +105,7 @@
 import { request } from "network/request.js";
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
-import {tranNumber} from "plugins/utils.js"
+import { tranNumber } from "plugins/utils.js";
 
 export default {
   name: "Recommendation",
@@ -113,18 +120,20 @@ export default {
       showIcon: -1,
       recommendPlaylist: [],
       privatecontent: [], //独家放送数据
-      recommendMV:[],//推荐mv
+      recommendMV: [], //推荐mv
+      currentDate:0
     };
   },
   computed: {
     //   计算属性传参
     playcount() {
-      return (num,point = 2)=>{
-        return tranNumber(num,point)
-      }
+      return (num, point = 2) => {
+        return tranNumber(num, point);
+      };
     },
   },
   created() {
+     this.currentDate = new Date().getDate()
     //获取轮播图数据
     this.getBannerData();
     this.getRecommendPlayList();
@@ -160,15 +169,14 @@ export default {
       });
       this.privatecontent = res.data.result;
     },
-
-    async getRecommendMvData(){
+    //获取推荐Mv
+    async getRecommendMvData() {
       let res = await request({
-        url:"/personalized/mv",
-        method:'get'
-      })
-      
-      this.recommendMV = res.data.result
+        url: "/personalized/mv",
+        method: "get",
+      });
 
+      this.recommendMV = res.data.result;
     },
     // 鼠标移入移出事件
     enter(index) {
@@ -179,14 +187,32 @@ export default {
       this.showIcon = -1;
     },
     // 跳转到歌单详情页面
-    toMusicListDetail(id){
+    toMusicListDetail(id) {
       // console.log(id);
       this.$router.push({
-        path:"/musicListDetail",
-        query:{
-          id
-        }
-      })
+        path: "/musicListDetail",
+        query: {
+          id,
+        },
+      });
+    },
+    //跳转到每日歌曲推荐
+    toRecommendMusic() {
+      this.$router.push("/recommendMusic");
+    },
+    //跳转到videoDetail
+    toVideoDetail(id, type) {
+      this.$router.push({
+        path: "/videoDetail",
+        query: {
+          id,
+          type,
+        },
+      });
+    },
+    //跳转到MVlist
+    tomMv(){
+      this.$router.push("/video/MV")
     }
   },
 };
@@ -225,6 +251,46 @@ export default {
 .el-carousel__item:nth-child(2n + 1) {
   background-color: #d3dce6;
 }
+.recommendMusic {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  overflow: hidden;
+  .dayEvery {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    width: 100%;
+    transform: scale(1.2);
+    filter: blur(5px) brightness(80%);
+  }
+  .recommendTitle {
+    position: absolute;
+    top: 10px;
+    color: #fff;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .rili {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 35px;
+    color: #f2f2f2;
+    // font-weight: bold;
+    .iconfont {
+      font-size: 90px;
+    }
+    span {
+      position: absolute;
+      left: 27px;
+      top: 48px;
+    }
+  }
+}
 .recommendPlaylist {
   .playlist {
     display: flex;
@@ -232,7 +298,7 @@ export default {
     min-width: 1100px;
     .listItem {
       position: relative;
-      // width: 19%;  
+      // width: 19%;
       min-width: 150px;
       max-width: 200px;
       margin: 0 20px 20px 0;
@@ -267,6 +333,7 @@ export default {
     }
   }
 }
+
 .listItem img {
   width: 100%;
   border-radius: 5px;
@@ -342,7 +409,7 @@ export default {
     font-size: 14px;
   }
 }
-.recommendMV{
+.recommendMV {
   margin-bottom: 100px;
   min-width: 1100px;
 }

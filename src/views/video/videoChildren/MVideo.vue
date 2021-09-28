@@ -1,5 +1,33 @@
 <template>
   <div id="mVideo" @scroll="handleScroll">
+    <!-- 导航栏 -->
+    <nav-bar
+      :tags="hotTags"
+      :tag="currentTag"
+      @child="handleSwitch"
+      @showAll="showAll"
+    >
+      <el-card
+        class="box-card allTags"
+        slot="allTag"
+        v-loading="loading"
+        element-loading-background="rgba(255, 255, 255,1)"
+        v-show="show"
+      >
+        <div slot="header" class="allVideo">
+          <span>全部视频</span>
+        </div>
+        <div class="text item">
+          <span
+            :class="{ categoryTag: item.name === currentTag }"
+            v-for="item in allTags"
+            :key="item.id"
+            @click="handleSwitch(item.name, item.id)"
+            >{{ item.name }}</span
+          >
+        </div>
+      </el-card>
+    </nav-bar>
     <!-- 列表数据 -->
     <div
       v-if="videoList !== null"
@@ -13,34 +41,6 @@
       element-loading-spinner="el-icon-loading"
       @scroll="handleScroll"
     >
-      <!-- 导航栏 -->
-      <nav-bar
-        :tags="hotTags"
-        :tag="currentTag"
-        @child="handleSwitch"
-        @showAll="showAll"
-      >
-        <el-card
-          class="box-card allTags"
-          slot="allTag"
-          v-loading="loading"
-          element-loading-background="rgba(255, 255, 255,1)"
-          v-show="show"
-        >
-          <div slot="header" class="allVideo">
-            <span>全部视频</span>
-          </div>
-          <div class="text item">
-            <span
-              :class="{ categoryTag: item.name === currentTag }"
-              v-for="item in allTags"
-              :key="item.id"
-              @click="handleSwitch(item.name, item.id)"
-              >{{ item.name }}</span
-            >
-          </div>
-        </el-card>
-      </nav-bar>
       <div
         class="vide-item"
         v-for="item in videoList"
@@ -52,7 +52,7 @@
           <i class="iconfont icon-bofang4"></i>
           <span>{{ item.data.playTime | handleNum }}</span>
         </div>
-        <div class="time">{{  item.data.durationms | handleMusicTime }}</div>
+        <div class="time">{{ item.data.durationms | handleMusicTime }}</div>
         <div class="desc">
           {{ item.data.title ? item.data.title : item.data.name }}
         </div>
@@ -83,7 +83,7 @@ export default {
     NavBar,
     CardList,
     CardListItem,
-    BackTop
+    BackTop,
   },
   props: {},
   data() {
@@ -98,8 +98,7 @@ export default {
       hasMore: true, //是否有更多数据
       disabled: false, //是否无限加载
       loading: true, //是否显示正在加载
-      currentHeight:0,
-
+      currentHeight: 0,
     };
   },
   filters: {
@@ -154,12 +153,11 @@ export default {
       this.getVideoAllTags();
     },
     //根据标签获取视频列表数据
-    async getVideoListData(id) {
-      this.loading = true;
+    async getVideoListData(id, hasMore) {
       let i = 2;
       let timestamp = Date.parse(new Date());
 
-      while (i && this.hasMore) {
+      while (i && hasMore) {
         let res = await request({
           url: "/video/group",
           method: "get",
@@ -170,7 +168,7 @@ export default {
             cookie: window.localStorage.getItem("cookie"),
           },
         });
-        // console.log(res);
+        console.log(res);
         this.currentPage += 1;
         this.hasMore = res.data.hasmore;
         this.videoList.push(...res.data.datas);
@@ -193,22 +191,23 @@ export default {
     //触底事件
     load() {
       if (this.hasMore) {
-        this.getVideoListData(this.currentTagId);
+        this.getVideoListData(this.currentTagId, this.hasMore);
       }
       this.disabled = true;
     },
     handleScroll(e) {
-      this.currentHeight = e.target.scrollTop
-    }
+      this.currentHeight = e.target.scrollTop;
+    },
   },
-  mounted() {
-
-  },
+  mounted() {},
   watch: {
     currentTagId(nId, oId) {
+      console.log(1);
+      console.log(nId);
       this.currentPage = 1;
       this.videoList = [];
-      this.getVideoListData(nId);
+      this.loading = true;
+      this.getVideoListData(nId, true);
     },
     videoList() {
       if (this.hasMore) {
@@ -219,13 +218,12 @@ export default {
     },
   },
   activated() {
-    let mVideo = document.querySelector(".videoList")
+    let mVideo = document.querySelector(".videoList");
     mVideo.scrollTo({
-      top:this.currentHeight
-    })
+      top: this.currentHeight,
+    });
   },
-  deactivated() { 
-  },
+  deactivated() {},
 };
 </script>
 <style lang="less" scoped>
@@ -241,7 +239,7 @@ export default {
   z-index: 9;
   left: 0;
   top: 35px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 .allVideo {
   font-size: 14px;
@@ -270,12 +268,12 @@ export default {
 .videoList {
   width: 100%;
   min-width: 1100px;
-  height: calc(100vh - 200px);
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 100px;
+  height: calc(100vh - 200px);
   overflow-y: scroll;
-   &::-webkit-scrollbar {
+  &::-webkit-scrollbar {
     display: none;
   }
 }
@@ -283,6 +281,7 @@ export default {
   position: relative;
   width: 23%;
   margin: 10px 20px 10px 0;
+
   img {
     position: relative;
     width: 100%;

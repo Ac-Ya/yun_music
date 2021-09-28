@@ -1,62 +1,67 @@
 <template>
   <div id="top">
-    <div class="listTitle">
-      <span>官方榜</span>
-    </div>
-    <!-- 官方榜数据 -->
-    <div
-      class="topItem"
-      v-for="(item, indez) in officalListData"
-      :key="item.id"
-    >
-      <div class="coverImg" @click="toMusicListDetail(item.id)">
-        <img :src="item.coverImgUrl" alt="" />
-        <span>{{ item.updateFrequency }}</span>
+    <template v-if="officalListData !== null">
+      <div class="listTitle">
+        <span>官方榜</span>
       </div>
-      <div class="musicList">
-        <div
-          class="musicListItem"
-          :class="{ showBackground: index % 2 == 0 }"
-          v-for="(musicItem, index) in officalListDetail[indez] &&
-          officalListDetail[indez].slice(0, 5)"
-          :key="musicItem.id"
-          @dblclick="playMusic(musicItem.id,index,indez,item.id)"
-        >
-          <span class="ranking" :class="{ showColor: index < 3 }">{{
-            index + 1
-          }}</span>
-          <span class="musicName">{{ musicItem.name }}</span>
-          <span class="singer"
-            >{{ musicItem.ar[0].name
-            }}{{ musicItem.ar[1] ? "/" + musicItem.ar[1].name : "" }}</span
-          >
-        </div>
-      </div>
-    </div>
-    <!-- 全球榜数据 -->
-    <div class="listTitle" v-if="globalListData !== null">
-      <span>全球榜</span>
-    </div>
-    <div class="globalList" v-if="globalListData !== null">
+      <!-- 官方榜数据 -->
       <div
-        class="listItem"
-        @mouseenter="enter(indey)"
-        @mouseleave="leave(indey)"
-        @click="toMusicListDetail(listItem.id)"
-        v-for="(listItem, indey) in globalListData"
-        :key="listItem.id"
+        class="topItem"
+        v-for="(item, indez) in officalListData"
+        :key="item.id"
       >
-        <img :src="listItem.coverImgUrl" alt="" />
-        <div class="playNum">
-          <i class="iconfont icon-bofang4"></i>
-          <span>{{ count(listItem.playCount) }}</span>
+        <div class="coverImg" @click="toMusicListDetail(item.id)">
+          <img :src="item.coverImgUrl" alt="" />
+          <span>{{ item.updateFrequency }}</span>
         </div>
-        <div class="playIcon" :class="{ show: showIcon == indey }">
-          <i class="iconfont icon-bofang"></i>
+        <div class="musicList">
+          <div
+            class="musicListItem"
+            :class="{ showBackground: index % 2 == 0 }"
+            v-for="(musicItem, index) in officalListDetail[indez] &&
+            officalListDetail[indez].slice(0, 5)"
+            :key="musicItem.id"
+            @dblclick="playMusic(musicItem.id, index, indez, item.id)"
+          >
+            <span class="ranking" :class="{ showColor: index < 3 }">{{
+              index + 1
+            }}</span>
+            <span class="musicName">{{ musicItem.name }}</span>
+            <span class="singer"
+              >{{ musicItem.ar[0].name
+              }}{{ musicItem.ar[1] ? "/" + musicItem.ar[1].name : "" }}</span
+            >
+          </div>
         </div>
-        <span class="playlistTitle">{{ listItem.name }}</span>
       </div>
-    </div>
+    </template>
+
+    <template v-if="globalListData !== null">
+      <div class="listTitle">
+        <span>全球榜</span>
+      </div>
+      <div class="globalList" >
+        <div
+          class="listItem"
+          @mouseenter="enter(indey)"
+          @mouseleave="leave(indey)"
+          @click="toMusicListDetail(listItem.id)"
+          v-for="(listItem, indey) in globalListData"
+          :key="listItem.id"
+        >
+          <img :src="listItem.coverImgUrl" alt="" />
+          <div class="playNum">
+            <i class="iconfont icon-bofang4"></i>
+            <span>{{ count(listItem.playCount) }}</span>
+          </div>
+          <div class="playIcon" :class="{ show: showIcon == indey }">
+            <i class="iconfont icon-bofang"></i>
+          </div>
+          <span class="playlistTitle">{{ listItem.name }}</span>
+        </div>
+      </div>
+    </template>
+    <!-- 全球榜数据 -->
   </div>
 </template>
 
@@ -134,16 +139,16 @@ export default {
         },
       });
     },
-    playMusic(musicId,index,indez,musicListId){
+    playMusic(musicId, index, indez, musicListId) {
       // index 是榜单所在索引
       //indez 是歌曲在榜单中的索引
-      let store =  this.$store
+      let store = this.$store;
       //将当前音乐id保存在vuex中
       store.commit("modifyMusicId", { musicId, index });
       store.commit("currentMusicList", this.officalListDetail[indez]);
-      store.commit("modifyMusicListId",musicListId)
-      store.commit("currentPlayState",true)
-    }
+      store.commit("modifyMusicListId", musicListId);
+      store.commit("currentPlayState", true);
+    },
   },
 };
 </script>

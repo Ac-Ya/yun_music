@@ -298,7 +298,6 @@ export default {
   overflow: hidden;
   display: flex;
   padding: 15px 15px;
-  position: relative;
   .cover img {
     width: 150px;
     height: 150px;
