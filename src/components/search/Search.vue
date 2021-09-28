@@ -6,13 +6,14 @@
       <input
         type="text"
         :placeholder="defalutkeyWord"
+        @input="handleInput"
         @change="handleChange"
         @keyup.enter="search"
         @focus="focus"
       />
     </div>
     <!-- 弹窗框 -->
-    <div class="searchBox" v-show="showSearchBox" id="searchBox">
+    <div class="searchBox" v-show="showSearchBox">
       <!-- 搜索历史 -->
       <div class="searchHistory" v-if="searchHistory.length !== 0">
         <div class="title">
@@ -47,11 +48,66 @@
         </div>
       </div>
     </div>
+    <div class="resultBox" v-show="searchkeywords !== null">
+      <div class="title">
+        搜“<span class="keywords">{{ searchkeywords }}</span
+        >”的结果>
+      </div>
+      <!-- 歌曲 -->
+      <ul class="resItem">
+        <li>
+          <i class="iconfont icon-yinle"></i>
+          <span class="text">单曲</span>
+        </li>
+        <li v-for="music in searchSuggest.songs" :key="music.id">
+          <span class="text"
+            >{{ music.name }}-<span class="keywords">{{
+              music.artists[0].name
+            }}</span></span
+          >
+        </li>
+      </ul>
+      <!-- 歌手 -->
+      <ul class="resItem">
+        <li>
+          <i class="iconfont icon-yonghu1"></i>
+          <span class="text">歌手</span>
+        </li>
+        <li v-for="singer in searchSuggest.artists" :key="singer.name">
+          <span class="keywords text">{{ singer.name }}</span>
+        </li>
+      </ul>
+      <!-- 专辑 -->
+      <ul class="resItem">
+        <li>
+          <i class="iconfont icon-zhuanji-"></i>
+          <span class="text">专辑</span>
+        </li>
+        <li v-for="album in searchSuggest.albums" :key="album.id">
+          <span class="text"
+            >{{ album.name }}-<span class="keywords">{{
+              album.artist.name
+            }}</span></span
+          >
+        </li>
+      </ul>
+      <!-- 歌单 -->
+      <ul class="resItem">
+        <li>
+          <i class="iconfont icon-gedan"></i>
+          <span class="text">歌单</span>
+        </li>
+        <li v-for="playlist in searchSuggest.playlists" :key="playlist.id">
+          <span class="text">{{ playlist.name }}</span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <script>
 import { request } from "network/request.js";
+import { debounce } from "../../plugins/utils.js";
 export default {
   name: "Search",
   components: {},
@@ -63,15 +119,22 @@ export default {
       searchHistory: [], //搜索历史记录
       // searchValue: "",
       showSearchBox: false, //是否显示搜索框
+      searchSuggest: {
+        albums: [],
+        artists: [],
+        songs: [],
+        playlists: [],
+        order: [],
+      },
+      searchkeywords:null,
+
     };
   },
   created() {
     this.getDefalutKeyWord();
     this.getSearchList();
-    this.getSearchHistory();
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     //获取默认搜索关键词
     async getDefalutKeyWord() {
@@ -85,17 +148,33 @@ export default {
       let res = await request({
         url: "/search/hot/detail",
       });
-      console.log(res);
       if (res.data.code !== 200) {
         return;
       }
       this.searchList = res.data.data;
     },
 
-    //监听输入框的输入
-    //   handleInput(e){
-    //       console.log(e);
-    //   }
+    //获取搜索建议
+    async getSearchSuggest(keywords) {
+      let res = await request({
+        url: "/search/suggest",
+        params: {
+          keywords,
+        },
+      });
+      let data = res.data.result
+      JSON.stringify(data) == '{}' ? this.searchSuggest : this.searchSuggest = {...data}
+      
+      console.log(this.searchSuggest);
+
+    },
+    //监听输入框的输入 使用防抖函数
+    handleInput: debounce( async function(e) {
+      this.searchkeywords = e.data;
+      await this.getSearchSuggest(e.data);
+
+    }, 300),
+
     //监听change事件
     handleChange(e) {
       let searchHistory = this.searchHistory;
@@ -151,9 +230,7 @@ export default {
       this.showSearchBox = true;
       window.addEventListener("click", this.eventHandler);
     },
-    search(){
-
-    }
+    search() {},
   },
   watch: {
     showSearchBox(n, o) {
@@ -217,7 +294,8 @@ export default {
   outline: none;
 }
 
-.searchBox {
+.searchBox,
+.resultBox {
   position: absolute;
   left: -20px;
   margin-top: 10px;
@@ -288,7 +366,6 @@ export default {
       margin-top: 10px;
       color: #a9a9a9;
     }
-    .musicname,
     .desc {
       white-space: nowrap;
       overflow: hidden;
@@ -300,6 +377,44 @@ export default {
     border-radius: 5px;
   }
   .top {
+    color: #ec4141;
+  }
+}
+.resultBox {
+  padding: 10px;
+  .title {
+    width: 100%;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  .resItem {
+    width: 100%;
+    font-size: 13px;
+    li {
+      width: 100%;
+      border-radius: 5px;
+      height: 30px;
+      line-height: 30px;
+      position: relative;
+      &:hover {
+        background-color: #f2f2f2;
+      }
+    }
+    .iconfont {
+      position: absolute;
+    }
+    .text {
+      margin-left: 20px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    li:first-child {
+      background-color: #f2f2f2;
+    }
+  }
+  .keywords {
+    margin-left: 0;
     color: #ec4141;
   }
 }

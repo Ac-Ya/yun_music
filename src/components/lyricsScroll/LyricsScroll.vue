@@ -31,17 +31,19 @@ export default {
       currentPlayTime: 0,
     };
   },
-  mounted() {},
+  mounted() {
+    console.log(this.lyrics);
+  },
   methods: {
     // 实现歌词滚动
-    lyricScroll(currentLyric) {
+    lyricScroll(currentLyricIndex) {
       // 获取歌词item
       let lyricsArr = document.querySelectorAll(".lyricsItem");
       // 获取歌词框
       let lyric = document.getElementById("lyricsScroll");
-      //   歌词item在歌词框的高度 = 歌词框的offsetTop - 歌词item的offsetTop
-      if (lyricsArr[currentLyric]) {
-        let distance = lyricsArr[currentLyric].offsetTop - lyric.offsetTop *2;
+      //   歌词item在歌词框的高度 = 歌词item的offsetTop -歌词框的offsetTop 
+      if (lyricsArr[currentLyricIndex]) {
+        let distance = lyricsArr[currentLyricIndex].offsetTop - lyric.offsetTop *2;
         // console.log(lyricsArr[currentLyric].offsetTop);
         lyric.scrollTo({
           behavior: "smooth",

@@ -8,11 +8,11 @@
     <!-- 中间搜索框区域 -->
     <div class="center">
       <!-- 上一页 -->
-      <div class="pre">
+      <div class="pre" @click="handleClick('pre')">
         <i class="iconfont icon-shangyiye"></i>
       </div>
       <!-- 下一页 -->
-      <div class="next">
+      <div class="next" @click="handleClick('next')">
         <i class="iconfont icon-xiayiye"></i>
       </div>
       <!-- 搜索框 -->
@@ -119,6 +119,7 @@
 </template>
 
 <script>
+let timer;
 import { request } from "network/request.js";
 import Search from "components/search/Search.vue"
 let uid = 0;
@@ -172,6 +173,7 @@ export default {
       if (uid) {
         this.show = !this.show;
         this.showQr = false
+        clearInterval(timer);
       }
       if (!uid) {
         console.log(1);
@@ -198,6 +200,7 @@ export default {
         url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
         withCredentials: true,
       });
+      console.log(res);
       return res.data;
     },
     //获取登录状态
@@ -221,7 +224,6 @@ export default {
     },
     //二维码登录
     async qrlogin() {
-      let timer;
       let timestamp = Date.now();
       //获取二维码key
       const res = await request({
@@ -246,15 +248,23 @@ export default {
         }
         if (statusRes.code === 803) {
           // 这一步会返回cookie
-          console.log(statusRes);
+          // console.log(statusRes);
           // 保存cookie
           window.localStorage.setItem("cookie", statusRes.cookie);
-          clearInterval(timer);
           this.$message.success("授权登录成功");
           await this.getLoginStatus();
+          debugger
+          clearInterval(timer);
         }
       }, 3000);
     },
+    handleClick(type){
+      if(type == 'pre'){
+        this.$router.back(-1)
+      }else if(type == 'next'){
+        this.$router.go(1)
+      }
+    }
   },
 };
 </script>
@@ -297,57 +307,11 @@ export default {
   background-color: rgba(88, 29, 29, 0.1);
   border-radius: 50%;
   margin: 0 3px;
+  &:hover{
+    color:#fff;
+  }
 }
 
-/* 中部搜索框样式 */
-// .center .search {
-//   width: 160px;
-//   height: 30px;
-//   /* border: 1px solid yellowgreen; */
-//   margin: auto 10px;
-//   border-radius: 20px;
-//   line-height: 30px;
-//   padding-left: 10px;
-//   background-color: rgba(88, 29, 29, 0.1);
-// }
-// .search i {
-//   color: @color;
-// }
-// .search input {
-//   width: 120px;
-//   margin-left: 5px;
-//   color: @color;
-//   border: none;
-//   /* 背景透明 */
-//   background-color: transparent;
-// }
-// /*兼容浏览器 */
-// .search input::-webkit-input-placeholder {
-//   color: rgba(211, 211, 211, 0.5);
-//   font-size: 12px;
-// }
-// /* Mozilla Firefox 4 to 18 */
-// .search input:-moz-placeholder {
-//   color: rgba(211, 211, 211, 0.5);
-//   opacity: 1;
-//   font-size: 12px;
-// }
-// /* Mozilla Firefox 19+ */
-// .search input::-moz-placeholder {
-//   color: rgba(211, 211, 211, 0.5);
-//   opacity: 1;
-//   font-size: 12px;
-// }
-// /* Internet Explorer 10+ */
-// .search input:-ms-input-placeholder {
-//   color: rgba(211, 211, 211, 0.5);
-//   font-size: 12px;
-// }
-
-// /* 选中时没有边框 */
-// .search input:focus {
-//   outline: none;
-// }
 
 /* 听歌识曲区域*/
 .soundHound {

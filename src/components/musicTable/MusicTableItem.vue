@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     playMusic(musicId, index) {
-      console.log(this.mData);
+      // console.log(this.mData);
       let store =  this.$store
       this.currentIndex = index;
       //将当前音乐id保存在vuex中

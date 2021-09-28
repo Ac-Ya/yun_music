@@ -36,21 +36,19 @@ export default {
       operationList1: {
         discoverMusic: "发现音乐",
         video: "视频",
-        radio: "电台",
+        // radio: "电台",
         dynamic: "动态",
         PrivateFM: "私人FM",
        
       },
       operationList2: {
         recentPlay: "最近播放",
-        cloudDisk: "音乐云盘",
         collection: "我的收藏",
         like: "我的喜欢",
         collectPlaylist: "收藏的歌单",
       },
       iconfontList: {
         recentPlay: "icon-zuijinbofang",
-        cloudDisk: "icon-yunpan",
         collection: "icon-favorite",
         like: "icon-xindong",
         collectPlaylist: "icon-gedan",
@@ -64,10 +62,10 @@ export default {
   methods: {
     to(key) {
       
-      if(!this.$store.state.isLogin && key !== 'discoverMusic'){
-        this.$message.error("对不起,您暂未登录！")
-        return
-      }
+      // if(!this.$store.state.isLogin && key !== 'discoverMusic'){
+      //   this.$message.error("对不起,您暂未登录！")
+      //   return
+      // }
       this.click = key;
       this.$router.push("/" + key);
     },
