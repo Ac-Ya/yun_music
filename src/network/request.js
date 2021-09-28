@@ -18,26 +18,24 @@ export function request(config) {
     instance.interceptors.request.use(config => {
         // console.log(document.cookie);
         // console.log(config);
-        // config.Cookie = document.cookie
         config.credentials  = true
         return config
     }, err => {
         console.log(err);
     });
 
-    // instance.interceptors.response.use(config => {
-    //     // console.log(config);
-    //     return config;
-    // }, err => {
-    //     console.log([err]);
-    //     if (err.response.data.msg == '需要登录') {
+    instance.interceptors.response.use(config => {
+        return config;
+    }, err => {
+        // console.log([err]);
+        if (err.response.data.msg == '需要登录') {
            
-    //         // console.log(err.response.data.msg);
+            console.log(err.response.data.msg);
 
-    //     } else {
-    //         console.log(err.response.message);
-    //     }
-    // });
-    // instance.defaults.withCredentials = true;
+        } else {
+            console.log(err.response.message);
+        }
+    });
+    instance.defaults.withCredentials = true;
     return instance(config) 
 }
