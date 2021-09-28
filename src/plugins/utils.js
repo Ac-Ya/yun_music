@@ -1,15 +1,15 @@
-const formatTime = (date,isHMS=true) => {
+const formatTime = (date, isHMS = true) => {
     const year = date.getFullYear()
     const month = date.getMonth() + 1
     const day = date.getDate()
     const hour = date.getHours()
     const minute = date.getMinutes()
     const second = date.getSeconds()
-    return isHMS ? `${[year, month, day].map(formatNumber).join('-')} ${[hour, minute, second].map(formatNumber).join(':')}`: `${[year, month, day].map(formatNumber).join('-')}`
+    return isHMS ? `${[year, month, day].map(formatNumber).join('-')} ${[hour, minute, second].map(formatNumber).join(':')}` : `${[year, month, day].map(formatNumber).join('-')}`
 }
-  
 
-const  formatDate = (date, fmt) =>{
+
+const formatDate = (date, fmt) => {
     // 1.获取年份
     // y+ 1个或者多个y  yyyy:2021
     // y* 0个或者多个y
@@ -68,7 +68,7 @@ const formatNumber = n => {
 //格式化音乐时间
 const formatMusicTime = (time) => {
     let totalSecond = Math.ceil(time / 1000)
-    
+
     let minute = parseInt(totalSecond / 60)
 
     let second = totalSecond - minute * 60
@@ -77,22 +77,22 @@ const formatMusicTime = (time) => {
 
 }
 //获取某个范围内的随机数
-const randomNum = (minNum, maxNum) =>{
+const randomNum = (minNum, maxNum) => {
     switch (arguments.length) {
-      case 1:
-        return parseInt(Math.random() * minNum + 1, 10);
-        break;
-      case 2:
-        return parseInt(Math.random() * ( maxNum - minNum + 1 ) + minNum, 10);
-        break;
-      default:
-        return 0;
-        break;
+        case 1:
+            return parseInt(Math.random() * minNum + 1, 10);
+            break;
+        case 2:
+            return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+            break;
+        default:
+            return 0;
+            break;
     }
-  }  
+}
 
 
-const handleMusicTime = (time)=> {
+const handleMusicTime = (time) => {
     // 如果超过了100000 基本都是毫秒为单位的了 先转成秒的
     time = parseInt(time)
     if (time > 10000) {
@@ -106,7 +106,7 @@ const handleMusicTime = (time)=> {
     s = s < 10 ? '0' + s : s;
     return m + ':' + s;
 }
-const  handleNum = (num) =>{
+const handleNum = (num) => {
     if (num > 10000) {
         num = (num / 10000).toFixed(2)
         return num + '万';
@@ -116,7 +116,41 @@ const  handleNum = (num) =>{
 }
 
 
-module.exports =  {
+const debounce =  function (fun, time) {
+    let timer = null
+    return function () {
+        let args = arguments
+        let firstRun = !timer
+        //判断是否第一次点击
+        if (firstRun) {
+            fun.apply(this, args)
+        }
+        if (timer) {
+            clearInterval(timer)
+            timer = null
+        }
+        timer = setTimeout(() => {
+            fun.apply(this, args)
+        }, time)
+    }
+}
+const throttle = function (fun,wait) {
+    //
+    let currentTime = Date.now()
+    return function () {
+        let args = arguments
+        let nowTime = Date.now()
+        //如果两次时间间隔超过了指定时间，则执行函数。
+        if (nowTime - currentTime >= wait) {
+            //重新设置currentTime 
+            currentTime = Date.now()
+            fun.apply(this,args)
+        }
+     }
+}
+
+
+module.exports = {
     tranNumber,
     timestampFormat,
     formatMusicTime,
@@ -124,5 +158,7 @@ module.exports =  {
     formatDate,
     handleMusicTime,
     randomNum,
-    handleNum
+    handleNum,
+    debounce,
+    throttle
 }
