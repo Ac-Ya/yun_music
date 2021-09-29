@@ -1,3 +1,4 @@
+
 const formatTime = (date, isHMS = true) => {
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -116,7 +117,7 @@ const handleNum = (num) => {
 }
 
 
-const debounce =  function (fun, time) {
+const debounce = function (fun, time) {
     let timer = null
     return function () {
         let args = arguments
@@ -134,7 +135,7 @@ const debounce =  function (fun, time) {
         }, time)
     }
 }
-const throttle = function (fun,wait) {
+const throttle = function (fun, wait) {
     //
     let currentTime = Date.now()
     return function () {
@@ -144,10 +145,11 @@ const throttle = function (fun,wait) {
         if (nowTime - currentTime >= wait) {
             //重新设置currentTime 
             currentTime = Date.now()
-            fun.apply(this,args)
+            fun.apply(this, args)
         }
-     }
+    }
 }
+
 
 
 module.exports = {
@@ -160,5 +162,5 @@ module.exports = {
     randomNum,
     handleNum,
     debounce,
-    throttle
+    throttle,
 }
