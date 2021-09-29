@@ -36,6 +36,7 @@
           class="hotSerachItem"
           v-for="(item, index) in searchList"
           :key="item.score"
+          @click="toSearchDetail(item.searchWord)"
         >
           <div class="num" :class="{ top: index < 3 }">{{ index + 1 }}</div>
           <div class="content">
@@ -48,8 +49,8 @@
         </div>
       </div>
     </div>
-    <div class="resultBox" v-show="searchkeywords !== null">
-      <div class="title">
+    <div class="resultBox" v-show="searchkeywords !== null && showSearchBox">
+      <div class="title" @click="toSearchDetail(searchkeywords)">
         搜“<span class="keywords">{{ searchkeywords }}</span
         >”的结果>
       </div>
@@ -164,8 +165,7 @@ export default {
       });
       let data = res.data.result
       JSON.stringify(data) == '{}' ? this.searchSuggest : this.searchSuggest = {...data}
-      
-      console.log(this.searchSuggest);
+      // console.log(this.searchSuggest);
 
     },
     //监听输入框的输入 使用防抖函数
@@ -177,17 +177,23 @@ export default {
 
     //监听change事件
     handleChange(e) {
-      let searchHistory = this.searchHistory;
       //获取输入框的内容
       if (e.target.value) {
-        if (searchHistory.length == 10) {
+       this.updateSearchHistory(e.target.value)
+      }
+    },
+    //添加搜索历史
+    updateSearchHistory(keywords){
+      let searchHistory = this.searchHistory;
+       if (searchHistory.length == 10) {
           //如果数组存满了删除最后一个
           searchHistory.pop();
         }
-        searchHistory.unshift(e.target.value);
+        searchHistory.unshift(keywords);
         window.localStorage.setItem("searchHistory", searchHistory);
-      }
+        searchHistory = null
     },
+
     //获取历史搜索记录
     getSearchHistory() {
       if (window.localStorage.getItem("searchHistory")) {
@@ -226,9 +232,22 @@ export default {
         this.showSearchBox = false;
       }
     },
+    //输入框的focus事件
     focus() {
       this.showSearchBox = true;
       window.addEventListener("click", this.eventHandler);
+    },
+
+    //跳转到搜索详情页
+    toSearchDetail(keywords){
+      this.showSearchBox = false
+      this.$router.push({
+        path:'/searchDetail',
+        query:{
+          keywords
+        }
+      })
+      this.updateSearchHistory(keywords)
     },
     search() {},
   },
