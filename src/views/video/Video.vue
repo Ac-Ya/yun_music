@@ -47,6 +47,7 @@ export default {
 <style lang="less" scoped>
 #video {
   width: 100%;
+  padding-left: 10px;
 }
 .show {
   position: relative;
