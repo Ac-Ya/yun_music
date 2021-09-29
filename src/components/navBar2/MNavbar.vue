@@ -21,31 +21,34 @@ export default {
       type: Object,
       default: null,
     },
-    currentPRoute:{//当前路由的父路由
-        type:String,
-        default:''
-    }
-  },
-  created(){
-    this.tag = this.$route.path
-    // console.log(this.$route.path);
+    currentPRoute: {
+      //当前路由的父路由
+      type: String,
+      default: "",
+    },
+
   },
   data() {
     return {
-        tag:'',//用于保存当前路由
+      tag: "", //用于保存当前路由
+      searchKeywords:''
     };
   },
-  methods:{
-      handleClick(key){
-        this.tag = key
-        this.$router.push(key)
-      }
+   created() {
+    this.tag = this.$route.path;
+    this.searchKeywords = this.keywords
   },
-  watch:{
-    // '$route.path'(n,v){
-    //   console.log(n);
-    // }
-  }
+  methods: {
+    handleClick(key) {
+        this.tag = key;
+        this.$router.push(key);
+    },
+  },
+  watch: {
+    '$route.path'(n,o){
+      this.tag = n
+    }
+  },
 };
 </script>
 <style lang="less" scoped>
@@ -54,8 +57,8 @@ export default {
   display: flex;
   position: fixed;
   z-index: 99;
-  background-color:#fff;
-  margin-left: 20px;
+  background-color: #fff;
+  // margin-left: 20px;
   padding-top: 5px;
 }
 .barItem {
