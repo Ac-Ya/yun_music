@@ -13,7 +13,7 @@
       </el-aside>
       <!-- 主要内容区 -->
       <el-main>
-        <keep-alive :include="['Video','SearchDetail']">
+        <keep-alive include="Video,SearchDetail">
           <router-view></router-view>
         </keep-alive>
       </el-main>

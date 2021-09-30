@@ -8,7 +8,7 @@
         <span v-else>MV详情</span>
       </div>
       <!-- 视频盒子 -->
-      <video autoplay controls :src="url ? url : ''" class="videoBox"></video>
+      <video autoplay controls :src="videourl ? videourl : ''" class="videoBox"></video>
       <!-- 视频信息 -->
       <div class="videoInfo" v-if="videoDetailData !== null">
         <!-- 用户信息 -->
@@ -139,7 +139,7 @@ export default {
       },
       videoDetailData: null, //视频详情数据
       videoInfo: null, //用于保存视频的点赞，分享，评论数
-      url: "", //用于保存视频的url
+      videourl: "", //用于保存视频的url
       relatedData: [], //用于保存相关推荐数据
     };
   },
@@ -208,14 +208,14 @@ export default {
           timestamp,
         },
       });
-      // console.log(res);
+      console.log(res);
       if (res.data.code !== 200) {
         this.$message("获取数据失败，请刷新重试！");
         return;
       }
       type == "video"
-        ? (this.url = res.data.urls[0].url)
-        : (this.url = res.data.data.url);
+        ? (this.videourl = res.data.urls[0].url)
+        : (this.videourl = res.data.data.url);
     },
     //获取相关推荐视频
     async getRelatedData(id, type) {
@@ -242,14 +242,12 @@ export default {
     },
 
     toVideoDetail(id, type) {
-      console.log(id);
-      console.log(type);
       this.getAllData(id,type)
     },
   },
   beforeDestroy() {
       this.$store.commit("modifyShowBottomControl", true);
-    (res = null),
+      (res = null),
       (mvid = null),
       (url = null),
       (params = null),

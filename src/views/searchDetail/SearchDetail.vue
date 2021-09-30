@@ -1,6 +1,6 @@
 <template>
   <div id="searchDetail">
-    <div class="sdHearder">找到({{ total }})首{{currentTag}}</div>
+    <div class="sdHearder">找到({{ total }})首{{ currentTag }}</div>
     <div class="searchDetailNav">
       <div
         class="navItem"
@@ -12,18 +12,28 @@
         {{ item.tag }}
       </div>
     </div>
+    <!-- <keep-alive :include="['SearchSong', 'SearchSinger','SearchAlbum','SearchMusicList','SearchMVideo']">
+      <component :is="show" ></component>
+    </keep-alive> -->
     <template v-if="result !== null">
       <search-song
         :songs="result.songs"
-        v-if="currentTag === '单曲'"
+        v-show="currentTag === '单曲'"
       ></search-song>
       <search-singer
         :singers="result.artists"
-        v-if="currentTag === '歌手'"
+        v-show="currentTag === '歌手'"
       ></search-singer>
-      <search-album v-if="currentTag === '专辑'" :albums="result.albums">
+      <search-album v-show="currentTag === '专辑'" :albums="result.albums">
       </search-album>
-      <search-music-list v-if="currentTag === '歌单'" :musicList="result.playlists"></search-music-list>
+      <search-music-list
+        v-show="currentTag === '歌单'"
+        :musicList="result.playlists"
+      ></search-music-list>
+      <search-m-video
+        v-show="currentTag === '视频'"
+        :mvListData="result.videos"
+      ></search-m-video>
     </template>
 
     <!-- 分页 -->
@@ -74,55 +84,89 @@ export default {
       total: 0,
       currentPage: 1,
       result: null,
-      type:1
+      type: 1,
+      show:'SearchSong'
     };
   },
   created() {
     let keywords = this.$route.query.keywords;
-    this.keywords = keywords
+    this.keywords = keywords;
     this.getSearchInfo(keywords, 1, 1);
   },
   methods: {
     handleClick(tag, type) {
       this.currentTag = tag;
-      this.type = type
+      this.type = type;
+      let show =''
+       switch (type) {
+        case 1:
+          show = 'SearchSong';
+          break;
+        case 100:
+           show = 'SearchSinger';
+          break;
+        case 10:
+          show = 'SearchAlbum';
+          break;
+        case 1000:
+           show = 'SearchMusicList';
+          break;
+        case 1014:
+           show = 'SearchMVideo';
+          break;
+        default:
+          break;
+      }
+      this.show = show
       this.getSearchInfo(this.keywords, type, this.currentPage);
+      show = null
     },
+    //获取搜索的信息
     async getSearchInfo(keywords, type, currentPage) {
       let timeStamp = new Date();
       let res = await request({
         url: "/cloudsearch",
         params: {
           keywords,
-          limit: 50,
-          offset: (currentPage - 1) * 50,
+          limit: 48,
+          offset: (currentPage - 1) * 48,
           type,
           timeStamp,
         },
       });
       let result = res.data.result;
-      this.result = result
-      let total = 0
-      if(type === 1){
-        total = result.songCount
-      }else if(type === 100){
-         total = result.artistCount
-      }else if(type === 10){
-        total = result.albumCount
-      }else if(type === 1000){
-        total = result.playlistCount
-      }else if(type === 1004){
-        total = result.videoCount
+      this.result = result;
+      let total = 0;
+      switch (type) {
+        case 1:
+          total = result.songCount;
+          break;
+        case 100:
+          total = result.artistCount;
+          break;
+        case 10:
+          total = result.albumCount;
+          break;
+        case 1000:
+          total = result.playlistCount;
+          break;
+        case 1014:
+          total = result.videoCount;
+          break;
+        default:
+          break;
       }
-      this.total = total
-      res = null,result = null,total = null
+      this.total = total;
+      (res = null), (result = null), (total = null);
     },
-    pageChange(page){
-      this.currentPage = page
-      this.result = null
-      this.getSearchInfo(this.keywords,this.type,page)
-    }
+    //分页事件
+    pageChange(page) {
+      this.currentPage = page;
+      this.result = null;
+      this.getSearchInfo(this.keywords, this.type, page);
+    },
   },
+  beforeDestroy() {},
 };
 </script>
 <style lang="less" scoped>
@@ -161,6 +205,6 @@ export default {
 .pages {
   width: 100%;
   text-align: center;
-  margin-bottom: 120px;
+  margin-bottom: 100px;
 }
 </style>

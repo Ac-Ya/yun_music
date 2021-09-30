@@ -45,14 +45,7 @@ export default {
   width: 100%;
   border-top: 1px solid #dcdcdc;
   margin-bottom: 80px;
-  .sdHearder {
-    height: 30px;
-    line-height: 30px;
-    font-size: 14px;
-    font-weight: bold;
-    margin-left: 20px;
-    margin-top: 50px;
-  }
+
 
   .singerList {
     width: 100%;
