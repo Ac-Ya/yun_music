@@ -152,6 +152,7 @@ export default {
       if (res.data.code !== 200) {
         return;
       }
+      console.log(res);
       this.searchList = res.data.data;
     },
 

@@ -36,7 +36,6 @@ export default {
   },
    created() {
     this.tag = this.$route.path;
-    this.searchKeywords = this.keywords
   },
   methods: {
     handleClick(key) {
