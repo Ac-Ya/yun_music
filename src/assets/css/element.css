@@ -103,13 +103,13 @@ tbody .el-table th, .el-table tr {
     height: 4px ! important;
 }
 
-.el-slider__bar {
+ .el-slider__bar {
     height: 4px !important;
 }
 
 .el-slider__button-wrapper {
     top: -16px !important;
-}
+} 
 
 .el-drawer.ltr, .el-drawer.rtl, .el-drawer__title,.el-drawer__container {
     /* width: 500px !important; */
@@ -144,9 +144,9 @@ tbody .el-table th, .el-table tr {
     padding: 5px 0;
 }
 
-.el-slider__button-wrapper {
+/* .el-slider__button-wrapper {
     height: 4px;
-}
+} */
 
 body .el-table .el-table__row .currentRow {
     color: #ec4141 !important;
