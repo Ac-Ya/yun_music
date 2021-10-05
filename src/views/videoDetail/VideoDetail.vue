@@ -3,7 +3,7 @@
     <!--视频详情 -->
     <div class="detail" v-if="videoDetailData !== null">
       <div class="title">
-        <i class="iconfont icon-shangyiye"></i>
+        <!-- <i class="iconfont icon-shangyiye"></i> -->
         <span v-if="routeData.type == 'video'">视频详情</span>
         <span v-else>MV详情</span>
       </div>
