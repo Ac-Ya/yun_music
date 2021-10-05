@@ -37,35 +37,37 @@ export default {
         discoverMusic: "发现音乐",
         video: "视频",
         // radio: "电台",
-        dynamic: "动态",
-        PrivateFM: "私人FM",
+        // dynamic: "动态",
+        // PrivateFM: "私人FM",
        
       },
       operationList2: {
+        like: "我的喜欢",
         recentPlay: "最近播放",
         collection: "我的收藏",
-        like: "我的喜欢",
-        collectPlaylist: "收藏的歌单",
+        // collectPlaylist: "收藏的歌单",
       },
       iconfontList: {
+        like: "icon-xindong",
         recentPlay: "icon-zuijinbofang",
         collection: "icon-favorite",
-        like: "icon-xindong",
-        collectPlaylist: "icon-gedan",
+        // collectPlaylist: "icon-gedan",
       },
     };
   },
   created() {
-    // console.log(this.$route.path);
     this.pattern(this.$route.path);
   },
   methods: {
     to(key) {
-      
-      // if(!this.$store.state.isLogin && key !== 'discoverMusic'){
-      //   this.$message.error("对不起,您暂未登录！")
-      //   return
-      // }
+      if(!this.$store.state.isLogin && key !== 'discoverMusic'){
+        this.$message.error("对不起,您暂未登录！")
+        return
+      }
+      if(key == 'collection'){
+        this.$message.warning("对不起,功能暂未完成！")
+        return
+      }
       this.click = key;
       this.$router.push("/" + key);
     },

@@ -30,7 +30,7 @@
     <!-- 右边控制区域 -->
     <div class="headerControl">
       <div class="login">
-        <img :src="userInfo.avatarUrl" alt="" v-if="userInfo.avatarUrl" />
+        <img :src="userInfo.avatarUrl" alt="" v-if="userInfo.avatarUrl" @click="toProfileInfo"/>
         <img src="../../assets/img/tx.png" alt="" v-else />
         <span class="loginInfo" v-if="userInfo.nickname">{{
           userInfo.nickname
@@ -264,7 +264,12 @@ export default {
       }else if(type == 'next'){
         this.$router.go(1)
       }
+    },
+    //跳转到个人详情
+    toProfileInfo(){
+      this.$router.push("/profileInfo")
     }
+    
   },
 };
 </script>

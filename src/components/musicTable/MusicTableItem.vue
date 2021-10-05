@@ -23,7 +23,8 @@
         <div class="singer">{{ item.ar[0].name }}</div>
         <div class="album">{{ item.al.name }}</div>
         <div class="burningTime">{{ burningTime(item.dt) }}</div>
-        <div class="playTime" :class="{ show: false }"></div>
+        <!-- <div class="playTime" >{{}}</div> -->
+        <!-- :class="{ show: false }" -->
       </div>
     </div>
   </div>
@@ -59,11 +60,9 @@ export default {
     };
   },
   created(){
-    // console.log(this.mData);
   },
   methods: {
     playMusic(musicId, index) {
-      // console.log(this.mData);
       let store =  this.$store
       this.currentIndex = index;
       //将当前音乐id保存在vuex中
@@ -71,7 +70,6 @@ export default {
       store.commit("currentMusicList", this.mData);
       store.commit("modifyMusicListId",this.musicListId)
       store.commit("currentPlayState",true)
-      // console.log(musicId);
     },
   },
   watch: {

@@ -32,7 +32,7 @@ export default {
     };
   },
   mounted() {
-    console.log(this.lyrics);
+    // console.log(this.lyrics);
   },
   methods: {
     // 实现歌词滚动
