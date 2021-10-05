@@ -168,7 +168,6 @@ export default {
             cookie: window.localStorage.getItem("cookie"),
           },
         });
-        console.log(res);
         this.currentPage += 1;
         this.hasMore = res.data.hasmore;
         this.videoList.push(...res.data.datas);
@@ -202,8 +201,6 @@ export default {
   mounted() {},
   watch: {
     currentTagId(nId, oId) {
-      console.log(1);
-      console.log(nId);
       this.currentPage = 1;
       this.videoList = [];
       this.loading = true;

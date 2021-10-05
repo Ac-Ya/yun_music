@@ -115,7 +115,7 @@ export default {
           id,
         },
       });
-      // console.log(res);
+      console.log(res);
       let data = res.data.playlist;
       /*
         1、如果isMore 为true 说明需要显示加载更多 
@@ -151,6 +151,7 @@ export default {
           ids: this.ids,
         },
       });
+      console.log(res);
       this.isMore = false;
       this.musicData = res.data.songs;
       this.$store.commit('currentMusicList',res.data.songs)

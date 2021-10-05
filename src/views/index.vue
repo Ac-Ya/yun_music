@@ -52,6 +52,8 @@ export default {
   },
   created() {
     // 判断用户是否登录
+    window.localStorage.getItem("uid") ? this.$store.commit("updataLoginState",true):this.$store.commit("updataLoginState",false)
+
   },
   methods: {},
   watch: {
@@ -63,6 +65,7 @@ export default {
       this.isShowBottomControl = showControl;
     },
   },
+  
 };
 </script>
 <style lang="less" scoped>

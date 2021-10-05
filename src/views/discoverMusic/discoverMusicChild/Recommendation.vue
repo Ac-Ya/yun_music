@@ -28,7 +28,7 @@
           <span class="recommendTitle">每日歌曲推荐</span>
           <div class="rili">
             <i class="iconfont icon-rili"></i>
-            <span>{{ currentDate }}</span>
+            <span>{{ currentDate | formatNumber}}</span>
           </div>
         </div>
         <!-- 每一个音乐卡片 -->
@@ -63,6 +63,7 @@
           class="privatecontentListItem"
           v-for="item in privatecontent"
           :key="item.id"
+          @click.native="toVideoDetail(item.id,'mv')"
         >
           <img :src="item.picUrl" alt="" slot="item-img" />
           <div slot="item-playIconfont" class="playIcon">
@@ -105,7 +106,7 @@
 import { request } from "network/request.js";
 import CardList from "components/cardList/CardList.vue";
 import CardListItem from "components/cardList/CardListItem.vue";
-import { tranNumber } from "plugins/utils.js";
+import { tranNumber ,formatNumber} from "plugins/utils.js";
 
 export default {
   name: "Recommendation",
@@ -131,6 +132,9 @@ export default {
         return tranNumber(num, point);
       };
     },
+  },
+  filters:{
+    formatNumber
   },
   created() {
      this.currentDate = new Date().getDate()
@@ -198,6 +202,10 @@ export default {
     },
     //跳转到每日歌曲推荐
     toRecommendMusic() {
+      if(!this.$store.state.isLogin){
+        this.$message.error("对不起,您暂未登录！")
+        return
+      }
       this.$router.push("/recommendMusic");
     },
     //跳转到videoDetail

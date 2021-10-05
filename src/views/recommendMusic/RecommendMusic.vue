@@ -4,7 +4,7 @@
       <div class="top">
         <div class="rili">
           <i class="iconfont icon-rili"></i>
-          <span>{{currentDate}}</span>
+          <span>{{currentDate | formatNumber}}</span>
         </div>
         <div class="desc">
           <p class="title">每日歌曲推荐</p>
@@ -40,6 +40,7 @@
 import MusicTable from "components/musicTable/MusicTable.vue";
 import MusicTableItem from "components/musicTable/MusicTableItem.vue";
 import { request } from "network/request.js";
+import {formatNumber} from "../../plugins/utils.js"
 export default {
   name: "RecommendMusic",
   components: {MusicTable,MusicTableItem},
@@ -50,6 +51,9 @@ export default {
         playListId:0,
         currentDate:0
     };
+  },
+  filters:{
+    formatNumber
   },
   created(){
       this.currentDate = new Date().getDate()
