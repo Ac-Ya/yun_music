@@ -7,6 +7,13 @@
 
    【注】如果有朋友想要写这个项目的,在项目搭建初期多花一点事件去进行构思,尽可能的想出要实现的功能,可以做一点笔记记录自己的思考,避免后期的修改。
 
+## 项目地址
+   https://gitee.com/ac-ya/yun_music
+
+   在线体验:
+      http://120.27.210.24/
+
+
 ## 本项目数据参考地址:
   https://github.com/Binaryify/NeteaseCloudMusicApi
 ## 参考API开发文档: 

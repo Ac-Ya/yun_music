@@ -325,14 +325,17 @@ export default {
     .playIcon {
       position: absolute;
       right: 10px;
-      bottom: 35px;
+      bottom: 40px;
       color: #ec4141;
       opacity: 0;
-      //   display: none;
+      width: 28px;
+      height: 28px;
+      background-color: white;
+      text-align: center;
+      line-height: 28px;
+      border-radius: 50%;
       .iconfont {
-        font-size: 30px;
-        border-radius: 50%;
-        background-color: white;
+        font-size: 28px;
       }
     }
     .show {

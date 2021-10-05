@@ -176,10 +176,8 @@ export default {
         clearInterval(timer);
       }
       if (!uid) {
-        console.log(1);
         this.showQr = true;
         this.show = !this.show;
-        this.qrlogin();
       }
     },
     //退出登录
@@ -200,7 +198,6 @@ export default {
         url: `/login/qr/check?key=${key}&timerstamp=${Date.now()}`,
         withCredentials: true,
       });
-      console.log(res);
       return res.data;
     },
     //获取登录状态
@@ -212,7 +209,7 @@ export default {
         },
         withCredentials: true, //关键
       });
-      console.log(res);
+      // console.log(res);
       if (res.data.data.profile !== null) {
         //获取的数据不完整
         // this.userInfo = res.data.data.profile;
@@ -271,6 +268,15 @@ export default {
     }
     
   },
+  watch:{
+    show(n,o){
+      if(this.showQr && n){
+        this.qrlogin()
+      }else{
+        clearInterval(timer);
+      }
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

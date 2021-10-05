@@ -208,7 +208,7 @@ export default {
           timestamp,
         },
       });
-      console.log(res);
+      // console.log(res);
       if (res.data.code !== 200) {
         this.$message("获取数据失败，请刷新重试！");
         return;
@@ -228,7 +228,7 @@ export default {
         params,
         timestamp,
       });
-      console.log(res);
+      // console.log(res);
       type == "video"
         ? (this.relatedData = res.data.data)
         : (this.relatedData = res.data.mvs);

@@ -56,7 +56,7 @@ export default {
           ids
         },
       });
-      console.log(res);
+      // console.log(res);
       this.musicData = res.data.songs
     }
   },
