@@ -27,7 +27,6 @@ export function request(config) {
     instance.interceptors.response.use(config => {
         return config;
     }, err => {
-        // console.log([err]);
         if (err.response.data.msg == '需要登录') {
            
             console.log(err.response.data.msg);

@@ -189,6 +189,9 @@ export default {
           //如果数组存满了删除最后一个
           searchHistory.pop();
         }
+        if(searchHistory.indexOf(keywords) !== -1){
+          return
+        }
         searchHistory.unshift(keywords);
         window.localStorage.setItem("searchHistory", searchHistory);
         searchHistory = null

@@ -15,7 +15,7 @@
         @click="showDetail"
       >
         <img :src="musicDetail.al.picUrl" alt="" v-if="musicDetail" />
-        <img src="../../assets/img/tx.png" alt="" v-else />
+        <img src="../../assets/img/tx2.jpg" alt="" v-else />
         <i class="iconfont icon-up" :class="{ showUp: showUp }"></i>
       </div>
       <div class="musicInfo" v-if="musicDetail">

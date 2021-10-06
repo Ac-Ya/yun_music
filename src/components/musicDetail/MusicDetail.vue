@@ -166,8 +166,8 @@ export default {
     width: 100%;
     height: 100%;
     // background-image: url("../../assets/img/tx.png");
-    background: linear-gradient(45deg,rgba(254,172,94,0.5),rgba(199,121,208,0.5),rgba(75,192,200,0.5));
-
+    // background: linear-gradient(45deg,rgba(254,172,94,0.5),rgba(199,121,208,0.5),rgba(75,192,200,0.5));
+    background:linear-gradient(to bottom,rgba(233, 169, 108, 0.493),pink);
     background-repeat: no-repeat;
     background-size: cover;
     -webkit-background-size: cover;

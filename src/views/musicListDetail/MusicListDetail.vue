@@ -15,7 +15,7 @@
           <span>{{ musicListData.updateFrequency }}</span>
         </div>
         <div class="listControl">
-          <div class="playAll">
+          <div class="playAll" @click="playAll">
             <i class="iconfont icon-bofang4"></i>
             <span>播放全部</span>
             <i class="iconfont icon-icon-test1"></i>
@@ -66,7 +66,12 @@
     </div>
     <!-- 评论区域 -->
     <!-- 传入评论类型type  资源id-->
-    <comment v-if="currentTag === '2'" class="comment" :commentType="+2" :sourceID="+this.$route.query.id"></comment>
+    <comment
+      v-if="currentTag === '2'"
+      class="comment"
+      :commentType="+2"
+      :sourceID="+this.$route.query.id"
+    ></comment>
   </div>
 </template>
 
@@ -88,14 +93,14 @@ export default {
       isMore: false, //是否需要加载跟多
       musicListData: null,
       musicData: [], //歌单的音乐详情列表
-      hotCommentData:[],//热门评论数据
-      playListId:0,//歌单的id
+      hotCommentData: [], //热门评论数据
+      playListId: 0, //歌单的id
     };
   },
   created() {
     // 要判断登录
     // console.log(this.$route.query.id);
-    this.playListId = +this.$route.query.id
+    this.playListId = +this.$route.query.id;
     this.getMusicListData(+this.$route.query.id);
   },
   computed: {
@@ -154,12 +159,24 @@ export default {
       console.log(res);
       this.isMore = false;
       this.musicData = res.data.songs;
-      this.$store.commit('currentMusicList',res.data.songs)
+      this.$store.commit("currentMusicList", res.data.songs);
     },
     switchTag(e) {
       if (/(1|2|3)/.test(+e.target.id)) {
         this.currentTag = e.target.id;
       }
+    },
+
+    //点击palyAll
+    playAll() {
+      let store = this.$store;
+      //将当前音乐id保存在vuex中
+      store.commit("modifyMusicId", {
+        musicId: this.musicData[0].id,
+        index: 0,
+      });
+      store.commit("currentMusicList", this.musicData);
+      store.commit("currentPlayState", true);
     },
 
     // async isLogin(){
@@ -168,9 +185,9 @@ export default {
     //     method:'get'
     //   })
     // }
-    playMusic(e){
+    playMusic(e) {
       console.log(e);
-    }
+    },
   },
 };
 </script>

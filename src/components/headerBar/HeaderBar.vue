@@ -31,11 +31,11 @@
     <div class="headerControl">
       <div class="login">
         <img :src="userInfo.avatarUrl" alt="" v-if="userInfo.avatarUrl" @click="toProfileInfo"/>
-        <img src="../../assets/img/tx.png" alt="" v-else />
+        <img src="../../assets/img/tx2.jpg" alt="" v-else />
         <span class="loginInfo" v-if="userInfo.nickname">{{
           userInfo.nickname
         }}</span>
-        <span class="loginInfo" v-else>点击头像登录</span>
+        <span class="loginInfo" v-else>未登录</span>
         <i class="iconfont icon-xiangxia" @click="loginOrInfo"></i>
       </div>
 
