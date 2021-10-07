@@ -202,7 +202,6 @@ export default {
           timestamp,
         },
       });
-      // console.log(res);
       let data = res.data;
 
       //判断是否有热门评论
@@ -232,7 +231,6 @@ export default {
 
     // 处理点击发送评论时的回调
     async handleComment() {
-      // console.log(this.$store.state.isLogin);
       let t = this.t,
         id = this.sourceID,
         type = this.commentType,
@@ -277,14 +275,13 @@ export default {
           timestamp,
         },
       });
-      console.log(res);
       if (res.data.code !== 200) {
         this.$message.error("评论失败,请稍后重试!");
       } else {
+        //更新评论
         this.getHotCommentData(id, type);
       }
       timestamp = null;
-      // console.log(res);
     },
 
     //输入框失去焦点,
@@ -327,11 +324,7 @@ export default {
 #comment {
   width: 100%;
 }
-// /deep/ .el-textarea__inner{
-//   // background-color: rgba(220,220,220,0.4);
-//   // border-color:  rgba(220,220,220,0.4);
 
-// }
 .submitComment {
   display: flex;
   position: relative;
