@@ -6,6 +6,7 @@
       :tag="currentTag"
       @child="handleSwitch"
       @showAll="showAll"
+      class="videonav"
     >
       <el-card
         class="box-card allTags"
@@ -228,6 +229,10 @@ export default {
   padding: 20px 0 0 100px;
   width: 100%;
 }
+// .videonav{
+//   position: fixed;
+//   z-index: 99;
+// }
 
 .box-card {
   width: 650px;
@@ -237,6 +242,7 @@ export default {
   left: 0;
   top: 35px;
   overflow-y: scroll;
+
 }
 .allVideo {
   font-size: 14px;
@@ -268,7 +274,7 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-bottom: 100px;
-  height: calc(100vh - 200px);
+  height: calc(100vh - 250px);
   overflow-y: scroll;
   &::-webkit-scrollbar {
     display: none;

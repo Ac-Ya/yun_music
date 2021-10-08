@@ -9,7 +9,8 @@ export default new Vuex.Store({
     isLogin: false,
     currentMusic: {
       musicId: 0,
-      index:-1
+      index: -1,
+      state:null,//   state用于添加或删除musicList中的数据
     },//保存当前音乐的id和当前音乐所在音乐列表的索引
     /* 1表示随机播放,2表示单曲循环,0表示顺序播放 */
     musicModel: 0,//用于保存当前的音乐播放模式
@@ -21,7 +22,8 @@ export default new Vuex.Store({
     isPlay: false,//当前播放状态
     showDetail: false,
     currentPlayTime: 0,//当前播放时间
-    showBottomControl:true //
+    showBottomControl: true, //是否显示底部控制栏
+    currentKeywords:'',//当前的keywords
   },
   mutations: {
     UID(state,payload) {
@@ -53,6 +55,9 @@ export default new Vuex.Store({
     },
     modifyShowBottomControl(state, payload) {
       state.showBottomControl = payload
+    },
+    updateCurrentKeywords(state, payload) {
+      state.currentKeywords = payload
     }
   },
   actions: {

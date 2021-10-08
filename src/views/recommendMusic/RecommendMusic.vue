@@ -76,6 +76,7 @@ export default {
 <style lang="less" scoped>
 #recommendMusic {
   width: 100%;
+  margin-bottom: 80px;
   .header {
     width: 100%;
     // height: 150px;

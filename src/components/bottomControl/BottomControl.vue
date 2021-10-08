@@ -85,6 +85,7 @@
 
 <script>
 let durationNum = 0;
+let time = 0;
 import { request } from "network/request.js";
 import { handleMusicTime, randomNum } from "plugins/utils.js";
 export default {
@@ -144,10 +145,6 @@ export default {
       // 修改保存在vuex中的播放状态
       this.$store.commit("currentPlayState", isPlay);
     },
-    // palyMusic
-    // playMusic() {
-    //   this.$refs.audioPlayer.play();
-    // },
 
     // 处理鼠标移入移除事件
     enter() {
@@ -165,6 +162,9 @@ export default {
     //进度条改变
     changeProgress(value) {
       this.currentTime = value;
+      if (!this.musicUrl) {
+        return;
+      }
       this.$refs.audioPlayer.currentTime = Math.floor(
         (value / 100) * durationNum
       );
@@ -172,7 +172,10 @@ export default {
     //播放时间的监听
     timeUpdate() {
       //获取当前播放时间
-      let time = this.$refs.audioPlayer.currentTime;
+      if (!this.musicUrl) {
+        return;
+      }
+      time = this.$refs.audioPlayer.currentTime;
       this.$store.commit("modifyPlayTime", time);
       time = Math.floor(time);
       this.currentTime = time;
@@ -193,10 +196,8 @@ export default {
     //切换音乐
     changeMusic(model) {
       let state = this.$store.state;
-
       // 获取当前的音乐播放模式
       let currentIcon = state.musicModel;
-
       //获取当前音乐所在index,和当前音乐所在的音乐列表,当前音乐列表的长度
       let index = state.currentMusic.index;
       if (index == -1) {
@@ -286,15 +287,21 @@ export default {
   },
   watch: {
     //监听musicId,
-    "$store.state.currentMusic"(currentMusic) {
+    async "$store.state.currentMusic"(currentMusic) {
       // console.log(currentMusic);
       //清空当前音乐
-      this.musicUrl = ''
+      this.musicUrl = "";
       this.musicId = currentMusic.musicId;
       this.value1 = 0;
       this.currentIndex = currentMusic.index;
-      this.getMusicDetailData(currentMusic.musicId);
-      this.getMusicUrl(currentMusic.musicId);
+      await this.getMusicDetailData(currentMusic.musicId);
+      await this.getMusicUrl(currentMusic.musicId);
+
+      if (currentMusic.state === "push") {
+        let musicList = this.$store.state.musicList;
+        musicList = [this.musicDetail]
+        this.$store.commit("currentMusicList", musicList);
+      }
     },
     "$store.state.showBottomControl"(showControl) {
       if (!showControl) {
@@ -402,6 +409,7 @@ export default {
 
 .listData {
   width: 100%;
+  margin-bottom: 70px;
   .drawerHeader {
     position: fixed;
     width: 100%;

@@ -1,12 +1,12 @@
 // 封装axios请求
 const axios = require("axios")
 
-axios.defaults.withCredentials=true;
+// axios.defaults.withCredentials=true;
 export function request(config) {
     let instance = axios.create({
         baseURL: "http://120.27.210.24:8889",
         timeout: 20000,
-        // withCredentials: true
+        withCredentials: true
     })
 
     // 请求拦截器 添加token 保证获取数据的权限
@@ -34,6 +34,6 @@ export function request(config) {
             console.log(err.response.message);
         }
     });
-    // instance.defaults.withCredentials = true;
+    instance.defaults.withCredentials = true;
     return instance(config) 
 }

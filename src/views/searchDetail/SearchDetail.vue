@@ -1,11 +1,11 @@
 <template>
   <div id="searchDetail">
-    <div class="sdHearder">找到({{ total }}){{unit}}{{ currentTag }}</div>
+    <div class="sdHearder">找到({{ total }}){{ unit }}{{ currentTag }}</div>
     <div class="searchDetailNav">
       <div
         class="navItem"
         :class="{ showBottom: item.tag === currentTag }"
-        v-for="(item) in navBarList"
+        v-for="item in navBarList"
         :key="item.id"
         @click="handleClick(item.tag, item.id)"
       >
@@ -74,10 +74,10 @@ export default {
     return {
       navBarList: [
         { tag: "单曲", id: 1 },
-        { tag: "歌手", id: 100},
+        { tag: "歌手", id: 100 },
         { tag: "专辑", id: 10 },
-        { tag: "歌单", id: 1000},
-        { tag: "视频", id: 1014},
+        { tag: "歌单", id: 1000 },
+        { tag: "视频", id: 1014 },
       ],
       keywords: "",
       currentTag: "单曲",
@@ -85,8 +85,8 @@ export default {
       currentPage: 1,
       result: null,
       type: 1,
-      show:'SearchSong',
-      unit:'首'
+      show: "SearchSong",
+      unit: "首",
     };
   },
   created() {
@@ -98,36 +98,36 @@ export default {
     handleClick(tag, type) {
       this.currentTag = tag;
       this.type = type;
-      let unit = ''
-      let show =''
-       switch (type) {
+      let unit = "";
+      let show = "";
+      switch (type) {
         case 1:
-          show = 'SearchSong';
+          show = "SearchSong";
           unit = "首";
           break;
         case 100:
-           show = 'SearchSinger';
-           unit = "位";
+          show = "SearchSinger";
+          unit = "位";
           break;
         case 10:
-          show = 'SearchAlbum';
+          show = "SearchAlbum";
           unit = "张";
           break;
         case 1000:
-           show = 'SearchMusicList';
-           unit = "个";
+          show = "SearchMusicList";
+          unit = "个";
           break;
         case 1014:
-           show = 'SearchMVideo';
-           unit = "个";
+          show = "SearchMVideo";
+          unit = "个";
           break;
         default:
           break;
       }
-      this.show = show
-      this.unit = unit
+      this.show = show;
+      this.unit = unit;
       this.getSearchInfo(this.keywords, type, this.currentPage);
-      show = null,unit = null
+      (show = null), (unit = null);
     },
     //获取搜索的信息
     async getSearchInfo(keywords, type, currentPage) {
@@ -175,6 +175,15 @@ export default {
     },
   },
   beforeDestroy() {},
+  watch: {
+    "$store.state.currentKeywords"(n, o) {
+      if (n !== o) {
+        this.keywords = n;
+        this.currentPage = 1;
+        this.getSearchInfo(n, 1, 1);
+      }
+    },
+  },
 };
 </script>
 <style lang="less" scoped>

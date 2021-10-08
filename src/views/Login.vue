@@ -97,13 +97,10 @@ export default {
             message: `${res.statusText}`,
             type: "success",
           });
-          console.log(res);
-          window.localStorage.setItem('token',res.data.token)
           window.localStorage.setItem("cookie", res.data.cookie);
           window.localStorage.setItem("uid", res.data.profile.userId);
           this.$store.commit("UID", res.data.profile.userId);
           this.$store.commit("updataLoginState", true);
-
           this.$router.push("/index");
         } else {
           this.$message({

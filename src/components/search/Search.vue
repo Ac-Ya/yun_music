@@ -25,6 +25,7 @@
             class="historyItem"
             v-for="(item, index) in searchHistory"
             :key="item + index"
+            @click="toSearchDetail(item)"
             >{{ item }}</span
           >
         </div>
@@ -60,7 +61,7 @@
           <i class="iconfont icon-yinle"></i>
           <span class="text">单曲</span>
         </li>
-        <li v-for="music in searchSuggest.songs" :key="music.id">
+        <li v-for="music in searchSuggest.songs" :key="music.id" @click="playMusic(music)">
           <span class="text"
             >{{ music.name }}-<span class="keywords">{{
               music.artists[0].name
@@ -74,7 +75,7 @@
           <i class="iconfont icon-yonghu1"></i>
           <span class="text">歌手</span>
         </li>
-        <li v-for="singer in searchSuggest.artists" :key="singer.name">
+        <li v-for="singer in searchSuggest.artists" :key="singer.name" @click="toSingerDetail(singer.id)">
           <span class="keywords text">{{ singer.name }}</span>
         </li>
       </ul>
@@ -93,7 +94,7 @@
         </li>
       </ul>
       <!-- 歌单 -->
-      <ul class="resItem">
+      <ul class="resItem" >
         <li>
           <i class="iconfont icon-gedan"></i>
           <span class="text">歌单</span>
@@ -134,6 +135,7 @@ export default {
   created() {
     this.getDefalutKeyWord();
     this.getSearchList();
+    this.getSearchHistory()
   },
   mounted() {},
   methods: {
@@ -164,15 +166,19 @@ export default {
         },
       });
       let data = res.data.result
+      // console.log(data);
+
       JSON.stringify(data) == '{}' ? this.searchSuggest : this.searchSuggest = {...data}
       // console.log(this.searchSuggest);
 
     },
     //监听输入框的输入 使用防抖函数
     handleInput: debounce( async function(e) {
-      this.searchkeywords = e.data;
-      await this.getSearchSuggest(e.data);
-
+      this.searchkeywords = e.target.value;
+      await this.getSearchSuggest(e.target.value);
+      if(e.target.value === ''){
+        this.searchkeywords = null
+      }
     }, 300),
 
     //监听change事件
@@ -250,7 +256,26 @@ export default {
           keywords
         }
       })
+      //更新当前的搜索关键词
+      this.$store.commit("updateCurrentKeywords",keywords)
+      //更新搜索历史
       this.updateSearchHistory(keywords)
+    },
+    //播放音乐
+    playMusic( music ){
+      let store =  this.$store
+      let musicList = store.state.musicList
+      //将当前音乐id保存在vuex中
+      store.commit("modifyMusicId", { musicId:music.id,index:0,state:'push'});
+      store.commit("currentPlayState",true)
+    },
+    //跳转到歌手详情页
+    toSingerDetail(id){
+      // console.log(id);
+      this.$router.push({
+        path: "/singerDetail",
+        query: { id },
+      });
     },
     search() {},
   },

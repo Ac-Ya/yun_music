@@ -50,7 +50,8 @@ export default {
   padding-left: 10px;
 }
 .show {
+  // position: fixed;
   position: relative;
-  top: 40px;
+  top: 30px;
 }
 </style>
