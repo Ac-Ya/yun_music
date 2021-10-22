@@ -39,11 +39,11 @@ export default {
   methods: {
     async getLikeListData(uid) {
         let res = await request({
-            url:'/likelist',
+            url:'/likelist?',
             params:{
                 cookie:window.localStorage.getItem('cookie'),
                 uid
-            }
+            },
         })
         await this.getMusicDetail(res.data.ids.join(','))
 

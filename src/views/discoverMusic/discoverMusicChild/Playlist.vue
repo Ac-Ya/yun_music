@@ -291,7 +291,8 @@ export default {
 }
 // 精品歌单入口区域
 .highquality {
-  width: 1100px;
+  max-width: 1200px;
+  min-width: 1100px;
   height: 180px;
   position: relative;
   border-radius: 10px;
@@ -344,6 +345,7 @@ export default {
 // 导航栏
 .playlistNav {
   width: 100%;
+  min-width: 1100px;
   height: 30px;
   // border: 1px solid yellow;
   margin: 20px 0;
@@ -387,7 +389,7 @@ export default {
 .list {
   display: flex;
   flex-wrap: wrap;
-  width: 1115px;
+  min-width: 1115px;
   .playListItem {
     width: 19%;
     position: relative;

@@ -44,6 +44,7 @@ export default {
       //   歌词item在歌词框的高度 = 歌词item的offsetTop -歌词框的offsetTop 
       if (lyricsArr[currentLyricIndex]) {
         let distance = lyricsArr[currentLyricIndex].offsetTop - lyric.offsetTop *2;
+
         // console.log(lyricsArr[currentLyric].offsetTop);
         lyric.scrollTo({
           behavior: "smooth",

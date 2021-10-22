@@ -231,7 +231,7 @@ export default {
   width: 100%;
 }
 .recommend {
-  max-width: 1100px;
+  // max-width: 1100px;
 }
 
 .carousel {
@@ -303,10 +303,10 @@ export default {
   .playlist {
     display: flex;
     flex-wrap: wrap;
+    justify-content:space-between;
     min-width: 1100px;
     .listItem {
       position: relative;
-      // width: 19%;
       min-width: 150px;
       max-width: 200px;
       margin: 0 20px 20px 0;
@@ -347,6 +347,8 @@ export default {
 
 .listItem img {
   width: 100%;
+  height: 200px;
+  min-height: 150px;
   border-radius: 5px;
 }
 
