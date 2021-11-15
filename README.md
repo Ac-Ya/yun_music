@@ -8,8 +8,8 @@
 ## 项目地址
    github地址:https://github.com/Ac-Ya/yun_music
 
-   在线体验:
-      http://120.27.210.24/
+   在线体验:http://182.61.6.227/
+      
 
 
 ## 本项目数据参考地址:
