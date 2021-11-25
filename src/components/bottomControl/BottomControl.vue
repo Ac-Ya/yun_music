@@ -229,7 +229,7 @@ export default {
           return;
         } else {
           index = index - num;
-          inex < 0 ? (index = listLength - 1) : index;
+          index < 0 ? (index = listLength - 1) : index;
           this.modify(index, currentMusicList);
         }
       }
